@@ -9,11 +9,15 @@ import java.util.Set;
 /**
  * Created on 16-2-23.
  */
-public class Level {
+public class Land {
 
     private Map<Team, Area> areaSet;
     private Set<Area> wallSet;
 
     private World world;
+
+    public Area getArea(Team team) {
+        return areaSet.get(team);
+    }
 
 }
