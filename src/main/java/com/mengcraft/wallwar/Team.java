@@ -5,9 +5,6 @@ package com.mengcraft.wallwar;
  */
 public enum Team {
 
-    BLUE,
-    GREEN,
-    RED,
-    YELLOW
+    RED, YELLOW, BLUE, GREEN, VIEWER
 
 }
