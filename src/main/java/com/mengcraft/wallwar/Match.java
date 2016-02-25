@@ -1,10 +1,11 @@
 package com.mengcraft.wallwar;
 
 import com.mengcraft.wallwar.level.Land;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -12,33 +13,62 @@ import java.util.Set;
  */
 public class Match {
 
-    private Map<Player, Rank> mapping;
+    private MemberSet waiter;
+    private MemberSet viewer;
+    private RankTable mapper;
 
-    private Set<Player> waiter;
-    private Set<Player> viewer;
-    private Set<Player> member;
-
+    private Main main;
     private Land land;
-    private boolean b;
 
-    public void dead(Player p) {
-
+    public void checkUp(Location loc) {
+        Set<Rank> set = new HashSet<>(mapper.values());
+        if (set.size() < 2) {
+            for (Player p : viewer) {
+                // 观战
+            }
+            for (Player p : mapper.keySet()) {
+                // 胜者
+            }
+            main.getServer().getScheduler().runTaskLater(main, () -> {
+                main.toLobby(viewer, mapper.keySet());
+            }, 100);
+            viewer.clear();
+            mapper.clear();
+        }
     }
 
-    public void setViewer(Set<Player> viewer) {
+    public void clearUp(Player p) {
+        if (mapper.containsKey(p)) {
+            mapper.remove(p).addNumber(-1);
+        } else if (viewer.contains(p)) {
+            viewer.remove(p);
+        } else {
+            waiter.remove(p);
+        }
+    }
+
+    public void addViewer(Player p) {
+        if (p.getGameMode() != GameMode.SPECTATOR) {
+            p.setGameMode(GameMode.SPECTATOR);
+            p.setHealth(p.getMaxHealth());
+        }
+        p.teleport(getLand()
+                .getArea(Rank.NONE)
+                .getSpawn()
+        );
+        viewer.add(p);
+    }
+
+    public void addWaiter(Player p) {
+        waiter.add(p);
+    }
+
+    public void setViewer(MemberSet viewer) {
         this.viewer = viewer;
-    }
-
-    public void setMember(Set<Player> member) {
-        this.member = member;
     }
 
     public Set<Player> getViewer() {
         return viewer;
-    }
-
-    public Set<Player> getMember() {
-        return member;
     }
 
     public Set<Player> getWaiter() {
@@ -53,20 +83,12 @@ public class Match {
         this.land = land;
     }
 
-    public void setRunning(boolean running) {
-        this.b = running;
-    }
-
-    public void addViewer(Player p) {
-        viewer.add(p);
-    }
-
-    public void addWaiter(Player p) {
-        waiter.add(p);
+    public boolean isFighter(Player p) {
+        return mapper.get(p) != null;
     }
 
     public boolean isRunning() {
-        return b;
+        return !mapper.isEmpty();
     }
 
 }
