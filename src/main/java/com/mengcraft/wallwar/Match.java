@@ -15,24 +15,15 @@ public class Match {
 
     private MemberSet waiter;
     private MemberSet viewer;
+    private MemberSet winner;
     private RankTable mapper;
 
     private Main main;
     private Land land;
 
     public void checkUp(Location loc) {
-        Set<Rank> set = new HashSet<>(mapper.values());
-        if (set.size() < 2) {
-            for (Player p : viewer) {
-                // 观战
-            }
-            for (Player p : mapper.keySet()) {
-                // 胜者
-            }
-            main.getServer().getScheduler().runTaskLater(main, () -> {
-                main.toLobby(viewer, mapper.keySet());
-            }, 100);
-            viewer.clear();
+        if (new HashSet<>(mapper.values()).size() < 2) {
+            winner.addAll(mapper.keySet());
             mapper.clear();
         }
     }

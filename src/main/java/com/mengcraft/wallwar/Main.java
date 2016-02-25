@@ -8,7 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -18,12 +17,12 @@ public class Main extends JavaPlugin {
 
     private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
-    public void toLobby(Set<Player>... array) {
-        for (Set<Player> set : array) {
-            for (Player p : set) {
-                toLobby(p);
-            }
-        }
+    @Override
+    public void onEnable() {
+        getConfig().options().copyDefaults(true);
+        saveConfig();
+
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     private void toLobby(Player p) {
@@ -36,7 +35,7 @@ public class Main extends JavaPlugin {
                 getLogger().log(Level.WARNING, "", e);
             }
         }
-        p.sendPluginMessage(this, "", buffer.toByteArray());
+        p.sendPluginMessage(this, "BungeeCord", buffer.toByteArray());
     }
 
     public static final Gson GSON = new Gson();

@@ -5,6 +5,9 @@ package com.mengcraft.wallwar;
  */
 public class Ticker implements Runnable {
 
+    private Match match;
+    private Main main;
+
     @Override
     public void run() {
 
