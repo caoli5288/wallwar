@@ -15,9 +15,18 @@
             <id>ci-mengcraft</id>
             <url>http://ci.mengcraft.com:8080/plugin/repository/everything/</url>
         </repository>
+        <repository>
+            <id>tiger-repo</id>
+            <url>http://repo.tigerhix.me/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>me.tigerhix.lib</groupId>
+            <artifactId>scoreboard</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>

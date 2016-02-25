@@ -1,4 +1,4 @@
-package com.mengcraft.wallwar.util;
+package com.mengcraft.wallwar.level;
 
 import org.bukkit.Location;
 
@@ -48,17 +48,17 @@ public class Area implements Iterable<Location> {
         this.offset = offset;
     }
 
-    @Override
-    public Iterator<Location> iterator() {
-        return new AreaIterator(base, base.clone().add(offset));
-    }
-
     public Location getSpawn() {
         return spawn;
     }
 
     public void setSpawn(Location spawn) {
         this.spawn = spawn;
+    }
+
+    @Override
+    public Iterator<Location> iterator() {
+        return new AreaIterator(base, base.clone().add(offset));
     }
 
 }

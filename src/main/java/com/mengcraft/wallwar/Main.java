@@ -1,5 +1,6 @@
 package com.mengcraft.wallwar;
 
+import com.google.gson.Gson;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -7,6 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class Main extends JavaPlugin {
 
-
+    public static final Gson GSON = new Gson();
 
 }

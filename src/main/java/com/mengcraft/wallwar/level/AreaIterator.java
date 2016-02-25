@@ -1,4 +1,4 @@
-package com.mengcraft.wallwar.util;
+package com.mengcraft.wallwar.level;
 
 import org.bukkit.Location;
 
