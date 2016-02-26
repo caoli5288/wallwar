@@ -6,6 +6,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -13,24 +15,32 @@ import java.util.Set;
  */
 public class Match {
 
-    private MemberSet waiter;
-    private MemberSet viewer;
-    private MemberSet winner;
-    private RankTable mapper;
+    private Map<Rank, List<Player>> map;
+    private Map<Player, Rank> mapper;
 
     private Main main;
     private Land land;
 
-    public void checkUp(Location loc) {
+    private Set<Player> waiter;
+    private Set<Player> viewer;
+    private Set<Player> winner;
+
+    private int wall;
+    private int lava;
+    private int wait;
+
+    public void checkUp() {
         if (new HashSet<>(mapper.values()).size() < 2) {
-            winner.addAll(mapper.keySet());
-            mapper.clear();
+            // TODO
+            // 将所有人加入胜利者
         }
     }
 
     public void clearUp(Player p) {
         if (mapper.containsKey(p)) {
-            mapper.remove(p).addNumber(-1);
+            Rank rank = mapper.remove(p);
+            rank.addNumber(-1);
+            p.teleport(land.getArea(rank).getSpawn());
         } else if (viewer.contains(p)) {
             viewer.remove(p);
         } else {
@@ -54,8 +64,12 @@ public class Match {
         waiter.add(p);
     }
 
-    public void setViewer(MemberSet viewer) {
+    public void setViewer(Set<Player> viewer) {
         this.viewer = viewer;
+    }
+
+    public Set<Player> getWinner() {
+        return winner;
     }
 
     public Set<Player> getViewer() {
@@ -74,12 +88,62 @@ public class Match {
         this.land = land;
     }
 
+    public void setMap(Map<Rank, List<Player>> map) {
+        this.map = map;
+    }
+
     public boolean isFighter(Player p) {
         return mapper.get(p) != null;
     }
 
     public boolean isRunning() {
         return !mapper.isEmpty();
+    }
+
+    public boolean isRankArea(Player p, Location loc) {
+        if (mapper.containsKey(p)) {
+            return land.getArea(mapper.get(p)).contains(loc);
+        }
+        return false;
+    }
+
+    public boolean isSameRank(Object o, Object other) {
+        if (mapper.containsKey(o)) { // NPE
+            return mapper.get(o) == mapper.get(other);
+        }
+        return false;
+    }
+
+    public int getWait() {
+        return wait;
+    }
+
+    public void setWait(int wait) {
+        this.wait = wait;
+    }
+
+    public int getWall() {
+        return wall;
+    }
+
+    public void setWall(int wall) {
+        this.wall = wall;
+    }
+
+    public int getLava() {
+        return lava;
+    }
+
+    public void setLava(int lava) {
+        this.lava = lava;
+    }
+
+    public boolean isTouchMaxSize() {
+        return waiter.size() >= land.getMaxSize();
+    }
+
+    public boolean isTouchMinSize() {
+        return waiter.size() >= land.getMinSize();
     }
 
 }

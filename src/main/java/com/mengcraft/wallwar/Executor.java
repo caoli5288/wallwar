@@ -1,9 +1,11 @@
 package com.mengcraft.wallwar;
 
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -13,7 +15,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
  */
 public class Executor implements Listener {
 
-    private Location lobby;
+    private Ticker ticker;
     private Match match;
     private Main main;
 
@@ -31,18 +33,38 @@ public class Executor implements Listener {
     @EventHandler
     public void handle(PlayerDeathEvent event) {
         match.clearUp(event.getEntity());
-        match.addViewer(event.getEntity());
-        match.checkUp(lobby);
+        match.checkUp();
     }
 
     @EventHandler
     public void handle(PlayerQuitEvent event) {
         Player p = event.getPlayer();
-        if (p.getLocation().getWorld() != lobby.getWorld()) {
-            p.teleport(lobby);
+        if (p.getLocation().getWorld() != main.getLobby().getWorld()) {
+            p.teleport(main.getLobby());
         }
         match.clearUp(p);
-        match.checkUp(lobby);
+        match.checkUp();
+    }
+
+    @EventHandler
+    public void handle(EntityDamageByEntityEvent event) {
+        if (event.getEntity() instanceof Player) {
+            event.setCancelled(match.isSameRank(event.getEntity(), event.getDamager()));
+        }
+    }
+
+    @EventHandler
+    public void handle(BlockBreakEvent event) {
+        if (!match.isRankArea(event.getPlayer(), event.getBlock().getLocation())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void handle(BlockPlaceEvent event) {
+        if (!match.isRankArea(event.getPlayer(), event.getBlock().getLocation())) {
+            event.setCancelled(true);
+        }
     }
 
 }

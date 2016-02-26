@@ -1,6 +1,7 @@
 package com.mengcraft.wallwar;
 
 import com.google.gson.Gson;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,6 +17,7 @@ import java.util.logging.Level;
 public class Main extends JavaPlugin {
 
     private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    private Location lobby;
 
     @Override
     public void onEnable() {
@@ -36,6 +38,14 @@ public class Main extends JavaPlugin {
             }
         }
         p.sendPluginMessage(this, "BungeeCord", buffer.toByteArray());
+    }
+
+    public Location getLobby() {
+        return lobby;
+    }
+
+    public void setLobby(Location lobby) {
+        this.lobby = lobby;
     }
 
     public static final Gson GSON = new Gson();

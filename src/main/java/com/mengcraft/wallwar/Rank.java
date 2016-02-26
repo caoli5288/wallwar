@@ -1,12 +1,30 @@
 package com.mengcraft.wallwar;
 
+import org.bukkit.ChatColor;
+
 /**
  * Created on 16-2-25.
  */
 public enum Rank {
 
-    BLUE, AQUA, GRAY, GOLD, NONE;
+    BLUE(ChatColor.BLUE),
+    AQUA(ChatColor.AQUA),
+    GRAY(ChatColor.GRAY),
+    GOLD(ChatColor.GOLD),
+    NONE(ChatColor.BOLD);
 
+    public static final Rank[] FIGHTER = {
+            BLUE,
+            AQUA,
+            GRAY,
+            GOLD,
+    };
+
+    Rank(ChatColor colour) {
+        this.colour = colour;
+    }
+
+    private ChatColor colour;
     private int number;
 
     public int getNumber() {
@@ -15,6 +33,10 @@ public enum Rank {
 
     public int addNumber(int i) {
         return number += i;
+    }
+
+    public ChatColor getColour() {
+        return colour;
     }
 
 }
