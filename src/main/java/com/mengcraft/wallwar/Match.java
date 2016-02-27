@@ -38,9 +38,7 @@ public class Match {
 
     public void clearUp(Player p) {
         if (mapper.containsKey(p)) {
-            Rank rank = mapper.remove(p);
-            rank.addNumber(-1);
-            p.teleport(land.getArea(rank).getSpawn());
+            mapper.remove(p).addNumber(-1);
         } else if (viewer.contains(p)) {
             viewer.remove(p);
         } else {
@@ -53,11 +51,14 @@ public class Match {
             p.setGameMode(GameMode.SPECTATOR);
             p.setHealth(p.getMaxHealth());
         }
-        p.teleport(getLand()
-                .getArea(Rank.NONE)
-                .getSpawn()
-        );
-        viewer.add(p);
+        if (!(isRunning())) {
+            p.teleport(getLand()
+                    .getArea(Rank.NONE)
+                    .getSpawn()
+            );
+        } else {
+            viewer.add(p);
+        }
     }
 
     public void addWaiter(Player p) {
@@ -96,6 +97,10 @@ public class Match {
         return mapper.get(p) != null;
     }
 
+    public boolean hasFinish() {
+        return !winner.isEmpty();
+    }
+
     public boolean isRunning() {
         return !mapper.isEmpty();
     }
@@ -112,6 +117,10 @@ public class Match {
             return mapper.get(o) == mapper.get(other);
         }
         return false;
+    }
+
+    public void setWaiter(Set<Player> waiter) {
+        this.waiter = waiter;
     }
 
     public int getWait() {

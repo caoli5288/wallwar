@@ -18,6 +18,12 @@ public class Land {
     private int minSize;
     private int maxSize;
 
+    private int lava;
+
+    public void lavaBootUp() {
+
+    }
+
     public Map<Rank, Area> getAreaMap() {
         return areaMap;
     }

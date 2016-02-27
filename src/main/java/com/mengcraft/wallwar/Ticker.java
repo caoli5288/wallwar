@@ -15,17 +15,17 @@ public class Ticker implements Runnable {
     @Override
     public void run() {
         if (match.isRunning()) {
-            if (match.getWinner().size() > 0) {
-                processEndOfMatch();
+            if (match.hasFinish()) {
+                processEndOf();
             } else {
-                processWallOrLava();
+                process();
             }
         } else {
             if (match.isTouchMaxSize()) {
                 startMatch();
             } else {
                 if (match.isTouchMinSize()) {
-                    processStartMatch();
+                    processStart();
                 } else {
                     setWait(0);
                 }
@@ -50,10 +50,10 @@ public class Ticker implements Runnable {
     }
 
     private void lavaBootUp() {
-
+        match.getLand().lavaBootUp();
     }
 
-    private void processWallOrLava() {
+    private void process() {
 
     }
 
@@ -67,7 +67,7 @@ public class Ticker implements Runnable {
         }
     }
 
-    private void processStartMatch() {
+    private void processStart() {
         if (wait == 0) {
             wait = match.getWait();
         }
@@ -77,7 +77,7 @@ public class Ticker implements Runnable {
         }
     }
 
-    private void processEndOfMatch() {
+    private void processEndOf() {
         if (wait == 0) {
             wait = match.getWait();
         }

@@ -13,6 +13,11 @@ public class Area implements Iterable<Location> {
     private Location offset;
     private Location spawn;
 
+    public Area(Location base, Location offset) {
+        this.base = base;
+        this.offset = offset;
+    }
+
     public boolean contains(Location loc) {
         return ((offset.getX() > 0 ? compareX(loc) > 0 : compareX(loc) < 0) &&
                 (offset.getY() > 0 ? compareY(loc) > 0 : compareY(loc) < 0) &&
@@ -36,12 +41,35 @@ public class Area implements Iterable<Location> {
         return base;
     }
 
-    public void setBase(Location base) {
-        this.base = base;
-    }
-
     public Location getOffset() {
         return offset;
+    }
+
+    public Area getSub(AreaFace face, int begin, int length) {
+        Location base = this.base.clone();
+        Location offset = this.offset.clone();
+        if (face.equals(AreaFace.BASE)) {
+            if (offset.getY() > 0) {
+                base.setY(base.getY() + begin);
+                offset.setY(length);
+            } else {
+                offset.setY(offset.getY() + begin);
+                base.setY(base.getY() + offset.getY() + length);
+            }
+        } else {
+            if (offset.getY() > 0) {
+                offset.setY(offset.getY() - begin);
+                base.setY(base.getY() + offset.getY() - length);
+            } else {
+                base.setY(base.getY() - begin);
+                offset.setY(-length);
+            }
+        }
+        return new Area(base, offset);
+    }
+
+    public void setBase(Location base) {
+        this.base = base;
     }
 
     public void setOffset(Location offset) {
