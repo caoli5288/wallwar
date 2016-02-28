@@ -33,38 +33,50 @@ public class Ticker implements Runnable {
         }
     }
 
-    public int getWait() {
-        return wait;
-    }
-
     public void setWait(int wait) {
         this.wait = wait;
     }
 
     private void startMatch() {
-
+        // TODO
     }
 
     private void endOfMatch() {
-
-    }
-
-    private void lavaBootUp() {
-        match.getLand().lavaBootUp();
+        // TODO
     }
 
     private void process() {
-
+        if (wall > 0) {
+            wall--;
+            if (wall == 0) {
+                match.getLand().boomWall();
+            }
+        } else {
+            if (lava > 0) {
+                lava--;
+                if (lava == 0) {
+                    match.getLand().bootLava();
+                }
+            } else {
+                lava = match.getLand().getLava();
+            }
+        }
     }
 
-    private void processLavaBootUp() {
-        if (lava == 0) {
-            lava = match.getLava();
-        }
-        lava--;
-        if (lava == 0) {
-            lavaBootUp();
-        }
+    public Match getMatch() {
+        return match;
+    }
+
+    public void setMatch(Match match) {
+        this.match = match;
+    }
+
+    public Main getMain() {
+        return main;
+    }
+
+    public void setMain(Main main) {
+        this.main = main;
     }
 
     private void processStart() {
