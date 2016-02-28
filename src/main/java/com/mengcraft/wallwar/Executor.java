@@ -1,6 +1,5 @@
 package com.mengcraft.wallwar;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,10 +22,6 @@ public class Executor implements Listener {
     @EventHandler
     public void handle(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if (p.getGameMode()!= GameMode.SPECTATOR) {
-            p.setGameMode(GameMode.SPECTATOR);
-            p.setHealth(p.getMaxHealth());
-        }
         if (match.isRunning()) {
             match.addViewer(p);
         } else {
@@ -37,7 +32,11 @@ public class Executor implements Listener {
 
     @EventHandler
     public void handle(PlayerDeathEvent event) {
-        match.clearUp(event.getEntity());
+        Player p = event.getEntity();
+        if (match.isRunning()) {
+            match.addViewer(p);
+        }
+        match.clearUp(p);
         match.checkUp();
     }
 

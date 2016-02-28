@@ -77,9 +77,8 @@ public class Match {
         if (p.getGameMode() != GameMode.SPECTATOR) {
             p.setGameMode(GameMode.SPECTATOR);
             p.setHealth(p.getMaxHealth());
-        } else {
-            viewer.add(p);
         }
+        viewer.add(p);
     }
 
     public void addWaiter(Player p) {
