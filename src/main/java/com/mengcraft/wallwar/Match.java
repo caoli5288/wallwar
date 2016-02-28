@@ -30,32 +30,53 @@ public class Match {
     private int wait;
 
     public void checkUp() {
-        if (new HashSet<>(mapper.values()).size() < 2) {
-            // TODO
-            // 将所有人加入胜利者
+        if (Main.DEBUG) {
+            main.getLogger().info("DEBUG #1 Check if game end.");
+        }
+        HashSet<Rank> set = new HashSet<>(mapper.values());
+        if (set.size() < 2) {
+            if (Main.DEBUG) {
+                main.getLogger().info("DEBUG #2 Game is end!");
+                main.getLogger().info("DEBUG #3 List winner!");
+            }
+            set.forEach(rank -> winner.addAll(map.get(rank)));
         }
     }
 
     public void clearUp(Player p) {
+        if (Main.DEBUG) {
+            main.getLogger().info("DEBUG #3 Clear up player " + p.getName() + ".");
+        }
         if (mapper.containsKey(p)) {
+            addViewer(p);
+            if (Main.DEBUG) {
+                main.getLogger().info("DEBUG #3 He is player.");
+            }
             mapper.remove(p).addNumber(-1);
         } else if (viewer.contains(p)) {
+            if (Main.DEBUG) {
+                main.getLogger().info("DEBUG #3 He is viewer.");
+            }
             viewer.remove(p);
         } else {
+            if (Main.DEBUG) {
+                main.getLogger().info("DEBUG #3 He is waiter.");
+            }
             waiter.remove(p);
         }
     }
 
     public void addViewer(Player p) {
+        if (Main.DEBUG) {
+            main.getLogger().info("DEBUG #4 Makeup a viewer " + p.getName() + ".");
+        }
+        Location spawn = land.getArea(Rank.NONE).getSpawn();
+        if (p.getLocation().getWorld() != spawn.getWorld()) {
+            p.teleport(spawn);
+        }
         if (p.getGameMode() != GameMode.SPECTATOR) {
             p.setGameMode(GameMode.SPECTATOR);
             p.setHealth(p.getMaxHealth());
-        }
-        if (!(isRunning())) {
-            p.teleport(getLand()
-                    .getArea(Rank.NONE)
-                    .getSpawn()
-            );
         } else {
             viewer.add(p);
         }

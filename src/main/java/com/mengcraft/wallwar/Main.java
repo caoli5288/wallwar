@@ -49,5 +49,6 @@ public class Main extends JavaPlugin {
     }
 
     public static final Gson GSON = new Gson();
+    public static final boolean DEBUG = true;
 
 }
