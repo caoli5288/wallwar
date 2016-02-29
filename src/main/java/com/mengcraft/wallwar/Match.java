@@ -18,6 +18,7 @@ public class Match {
     private Multimap<Rank, Player> map;
     private Map<Player, Rank> mapper;
 
+    private Location lobby;
     private Main main;
     private Land land;
 
@@ -100,6 +101,14 @@ public class Match {
 
     public Set<Player> getWinner() {
         return winner;
+    }
+
+    public Location getLobby() {
+        return lobby;
+    }
+
+    public void setLobby(Location lobby) {
+        this.lobby = lobby;
     }
 
     public Set<Player> getViewer() {

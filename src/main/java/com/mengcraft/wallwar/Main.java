@@ -17,7 +17,6 @@ import java.util.logging.Level;
 public class Main extends JavaPlugin {
 
     private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    private Location lobby;
 
     @Override
     public void onEnable() {
@@ -32,20 +31,12 @@ public class Main extends JavaPlugin {
             DataOutput writer = new DataOutputStream(buffer);
             try {
                 writer.writeUTF("Connect");
-                writer.writeUTF(getConfig().getString("generic.lobby"));
+                writer.writeUTF(getConfig().getString("lobby"));
             } catch (IOException e) {
                 getLogger().log(Level.WARNING, "", e);
             }
         }
         p.sendPluginMessage(this, "BungeeCord", buffer.toByteArray());
-    }
-
-    public Location getLobby() {
-        return lobby;
-    }
-
-    public void setLobby(Location lobby) {
-        this.lobby = lobby;
     }
 
     public static final Gson GSON = new Gson();

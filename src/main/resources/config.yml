@@ -1,2 +1,14 @@
-generic:
-  lobby: "lobby"
+match:
+  lobby: ""
+  size:
+    min: 0
+    max: 0
+  time:
+    wall: 0
+    lava: 0
+    wait: 0
+  land:
+    wall: ""
+  area: []
+lobby: "lobby"
+level: ""

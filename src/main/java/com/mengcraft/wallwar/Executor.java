@@ -43,8 +43,8 @@ public class Executor implements Listener {
     @EventHandler
     public void handle(PlayerQuitEvent event) {
         Player p = event.getPlayer();
-        if (p.getLocation().getWorld() != main.getLobby().getWorld()) {
-            p.teleport(main.getLobby());
+        if (p.getLocation().getWorld() != match.getLobby().getWorld()) {
+            p.teleport(match.getLobby());
         }
         match.clearUp(p);
         match.checkUp();
