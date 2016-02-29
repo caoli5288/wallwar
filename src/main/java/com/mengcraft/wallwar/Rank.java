@@ -13,13 +13,6 @@ public enum Rank {
     GOLD(ChatColor.GOLD),
     NONE(ChatColor.BOLD);
 
-    public static final Rank[] FIGHTER = {
-            BLUE,
-            AQUA,
-            GRAY,
-            GOLD,
-    };
-
     Rank(ChatColor colour) {
         this.colour = colour;
     }

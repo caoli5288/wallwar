@@ -38,11 +38,18 @@ public class Ticker implements Runnable {
     }
 
     private void startMatch() {
-        // TODO
+        RankRoller roller = new RankRoller();
+        match.getWaiter().forEach(p -> {
+            match.addMember(p, roller.next());
+            match.tpToSpawn(p);
+        });
     }
 
     private void endOfMatch() {
-        // TODO
+        main.getServer().getOnlinePlayers().forEach(p -> {
+            main.tpToLobby(p);
+        });
+        main.getServer().shutdown();
     }
 
     private void process() {

@@ -27,7 +27,7 @@ public class Main extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
-    private void toLobby(Player p) {
+    public void tpToLobby(Player p) {
         if (buffer.size() < 1) {
             DataOutput writer = new DataOutputStream(buffer);
             try {

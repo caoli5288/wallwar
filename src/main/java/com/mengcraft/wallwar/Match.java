@@ -1,12 +1,12 @@
 package com.mengcraft.wallwar;
 
+import com.google.common.collect.Multimap;
 import com.mengcraft.wallwar.level.Land;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class Match {
 
-    private Map<Rank, List<Player>> map;
+    private Multimap<Rank, Player> map;
     private Map<Player, Rank> mapper;
 
     private Main main;
@@ -66,6 +66,15 @@ public class Match {
         }
     }
 
+    public void addMember(Player p, Rank rank) {
+        mapper.put(p, rank);
+        map.put(rank, p);
+    }
+
+    public void tpToSpawn(Player p) {
+        p.teleport(land.getArea(mapper.get(p)).getSpawn());
+    }
+
     public void addViewer(Player p) {
         if (Main.DEBUG) {
             main.getLogger().info("DEBUG #4 Makeup a viewer " + p.getName() + ".");
@@ -109,8 +118,16 @@ public class Match {
         this.land = land;
     }
 
-    public void setMap(Map<Rank, List<Player>> map) {
+    public Multimap<Rank, Player> getMap() {
+        return map;
+    }
+
+    public void setMap(Multimap<Rank, Player> map) {
         this.map = map;
+    }
+
+    public Map<Player, Rank> getMapper() {
+        return mapper;
     }
 
     public boolean isFighter(Player p) {
