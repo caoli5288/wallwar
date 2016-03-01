@@ -23,14 +23,19 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>me.tigerhix.lib</groupId>
             <artifactId>scoreboard</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <groupId>com.sk89q</groupId>
+            <artifactId>worldedit</artifactId>
+            <version>5.5.8</version>
         </dependency>
     </dependencies>
 

@@ -1,7 +1,8 @@
-#wallwar
-游戏结束后
-- 禁止新玩家加入
-- 进行结算
-- 等待一定时间
-- t走玩家
-- 关服
+# WallWar
+## Command
+- /wall set-level
+- /wall set-size
+- /wall set-time
+- /wall set-area
+- /wall set-wall
+- /wall set-lobby

@@ -4,9 +4,9 @@ match:
     min: 0
     max: 0
   time:
+    wait: 0
     wall: 0
     lava: 0
-    wait: 0
   land:
     wall: ""
   area: []

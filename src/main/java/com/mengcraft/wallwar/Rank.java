@@ -7,11 +7,11 @@ import org.bukkit.ChatColor;
  */
 public enum Rank {
 
+    NONE(ChatColor.BOLD),
     BLUE(ChatColor.BLUE),
     AQUA(ChatColor.AQUA),
     GRAY(ChatColor.GRAY),
-    GOLD(ChatColor.GOLD),
-    NONE(ChatColor.BOLD);
+    GOLD(ChatColor.GOLD);
 
     Rank(ChatColor colour) {
         this.colour = colour;
