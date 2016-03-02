@@ -6,7 +6,11 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import javax.naming.OperationNotSupportedException;
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -16,9 +20,10 @@ import java.util.Set;
  */
 public class Land {
 
-    private Map<Rank, Area> areaMap;
-    private Set<Area> wallSet;
-    private World world;
+    private Map<Rank, Area> areaMap = new EnumMap<>(Rank.class);
+    private List<Area> wallSet = new ArrayList<>();
+
+    private World level;
 
     private int minSize;
     private int maxSize;
@@ -26,6 +31,10 @@ public class Land {
     private int wall;
     private int lava;
     private int lavaHigh;
+
+    public boolean check() {
+        throw new RuntimeException();
+    }
 
     public void boomWall() {
         Random rand = new Random();
@@ -68,20 +77,16 @@ public class Land {
         this.areaMap = areaMap;
     }
 
-    public Set<Area> getWallSet() {
+    public List<Area> getWallSet() {
         return wallSet;
     }
 
-    public void setWallSet(Set<Area> wallSet) {
-        this.wallSet = wallSet;
+    public World getLevel() {
+        return level;
     }
 
-    public World getWorld() {
-        return world;
-    }
-
-    public void setWorld(World world) {
-        this.world = world;
+    public void setLevel(World level) {
+        this.level = level;
     }
 
     public int getMinSize() {
@@ -90,6 +95,10 @@ public class Land {
 
     public void setMinSize(int minSize) {
         this.minSize = minSize;
+    }
+
+    public void setArea(int i, Area area) {
+        areaMap.put(Rank.values()[i], area);
     }
 
     public int getWall() {
@@ -122,6 +131,10 @@ public class Land {
 
     public void setMaxSize(int maxSize) {
         this.maxSize = maxSize;
+    }
+
+    public Area getArea(int index) {
+        return areaMap.get(Rank.values()[index]);
     }
 
     public Area getArea(Rank rank) {

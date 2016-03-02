@@ -9,6 +9,6 @@ match:
     lava: 0
   land:
     wall: ""
-  area: []
+    area: []
+    name: ""
 lobby: "lobby"
-level: ""

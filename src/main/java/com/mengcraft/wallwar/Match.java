@@ -1,11 +1,13 @@
 package com.mengcraft.wallwar;
 
-import com.google.common.collect.Multimap;
 import com.mengcraft.wallwar.level.Land;
+import com.mengcraft.wallwar.util.MultiMap;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +17,7 @@ import java.util.Set;
  */
 public class Match {
 
-    private Multimap<Rank, Player> map;
+    private MultiMap<Rank, Player> map;
     private Map<Player, Rank> mapper;
 
     private Location lobby;
@@ -26,9 +28,18 @@ public class Match {
     private Set<Player> viewer;
     private Set<Player> winner;
 
+    private int wait;
     private int wall;
     private int lava;
-    private int wait;
+
+    public Match() {
+        this.map = new MultiMap<>(new EnumMap<>(Rank.class));
+        this.mapper = new HashMap<>();
+    }
+
+    public boolean check() {
+        return lobby != null && wait > 0 && wall > 0 && lava > 0 && land.check();
+    }
 
     public void checkUp() {
         if (Main.DEBUG) {
@@ -127,11 +138,11 @@ public class Match {
         this.land = land;
     }
 
-    public Multimap<Rank, Player> getMap() {
+    public MultiMap<Rank, Player> getMap() {
         return map;
     }
 
-    public void setMap(Multimap<Rank, Player> map) {
+    public void setMap(MultiMap<Rank, Player> map) {
         this.map = map;
     }
 
