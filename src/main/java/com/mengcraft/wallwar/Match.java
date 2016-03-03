@@ -1,5 +1,6 @@
 package com.mengcraft.wallwar;
 
+import com.google.gson.JsonObject;
 import com.mengcraft.wallwar.level.Land;
 import com.mengcraft.wallwar.util.MultiMap;
 import org.bukkit.GameMode;
@@ -35,6 +36,9 @@ public class Match {
     public Match() {
         this.map = new MultiMap<>(new EnumMap<>(Rank.class));
         this.mapper = new HashMap<>();
+        this.waiter = new HashSet<>();
+        this.viewer = new HashSet<>();
+        this.winner = new HashSet<>();
     }
 
     public boolean check() {
@@ -210,6 +214,33 @@ public class Match {
 
     public boolean isTouchMinSize() {
         return waiter.size() >= land.getMinSize();
+    }
+
+    public void load() {
+        setLobby(toLocation(main.getConfig().getString("match.lobby")));
+        setWait(main.getConfig().getInt("match.time.wait"));
+        setWall(main.getConfig().getInt("match.time.wall"));
+        setLava(main.getConfig().getInt("match.time.lava"));
+    }
+
+    public void save() {
+        main.getConfig().set("match.lobby", lobby);
+        main.getConfig().set("match.time.wait", wait);
+        main.getConfig().set("match.time.wall", wall);
+        main.getConfig().set("match.time.lava", lava);
+
+    }
+
+    private Location toLocation(String o) {
+        return toLocation(Main.GSON.fromJson(o, JsonObject.class));
+    }
+
+    private Location toLocation(JsonObject object) {
+        return new Location(main.getServer().getWorld(object.get("level").getAsString()),
+                object.get("x").getAsDouble(),
+                object.get("y").getAsDouble(),
+                object.get("z").getAsDouble()
+        );
     }
 
 }

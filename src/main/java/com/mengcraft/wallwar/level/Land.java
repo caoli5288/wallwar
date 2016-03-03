@@ -1,28 +1,31 @@
 package com.mengcraft.wallwar.level;
 
+import com.mengcraft.wallwar.Main;
 import com.mengcraft.wallwar.Rank;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-import javax.naming.OperationNotSupportedException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
+
+import static com.mengcraft.wallwar.level.Area.toArea;
 
 /**
  * Created on 16-2-25.
  */
 public class Land {
 
-    private Map<Rank, Area> areaMap = new EnumMap<>(Rank.class);
-    private List<Area> wallSet = new ArrayList<>();
+    private final Map<Rank, Area> areaMap = new EnumMap<>(Rank.class);
+    private final List<Area> wallSet = new ArrayList<>();
 
+    private Main main;
     private World level;
 
     private int minSize;
@@ -33,7 +36,13 @@ public class Land {
     private int lavaHigh;
 
     public boolean check() {
-        throw new RuntimeException();
+        return (areaMap.size() == 5 &&
+                wallSet.size() != 0 &&
+                level != null &&
+                minSize > 0 &&
+                maxSize > 0 &&
+                wall > 0 &&
+                lava > 0);
     }
 
     public void boomWall() {
@@ -71,10 +80,6 @@ public class Land {
 
     public Map<Rank, Area> getAreaMap() {
         return areaMap;
-    }
-
-    public void setAreaMap(Map<Rank, Area> areaMap) {
-        this.areaMap = areaMap;
     }
 
     public List<Area> getWallSet() {
@@ -139,6 +144,42 @@ public class Land {
 
     public Area getArea(Rank rank) {
         return areaMap.get(rank);
+    }
+
+    public void save() {
+        main.getConfig().set("match.land.name", level.getName());
+        main.getConfig().set("match.land.wall", toString(wallSet));
+        main.getConfig().set("match.land.area", toString(areaMap.values()));
+        main.getConfig().set("match.size.min", minSize);
+        main.getConfig().set("match.size.max", maxSize);
+    }
+
+    public void load() {
+        setLevel(main.getServer().getWorld(main.getConfig().getString("match.land.name")));
+        for (String line : main.getConfig().getStringList("match.land.area")) {
+            wallSet.add(toArea(level, line));
+        }
+        for (String line : main.getConfig().getStringList("match.land.area")) {
+            areaMap.put(Rank.getRank(areaMap.size()), toArea(level, line));
+        }
+        setMinSize(main.getConfig().getInt("match.size.min"));
+        setMaxSize(main.getConfig().getInt("match.size.max"));
+    }
+
+    public Main getMain() {
+        return main;
+    }
+
+    public void setMain(Main main) {
+        this.main = main;
+    }
+
+    private static List<String> toString(Collection<Area> set) {
+        List<String> list = new ArrayList<>(set.size());
+        set.forEach(area -> {
+            list.add(area.toString());
+        });
+        return list;
     }
 
 }

@@ -63,10 +63,15 @@ public class Commander implements CommandExecutor {
     }
 
     private boolean setSave(Player p) {
-        if (match.check()) {
-            // TODO
+        boolean b = match.check();
+        if (b) {
+            match.save();
+            match.getLand().save();
+            main.saveConfig();
+        } else {
+            p.sendMessage("§4Command error! Not configured yet.");
         }
-        return false;
+        return b;
     }
 
     private boolean setSpawn(Player p, Iterator<String> it) {

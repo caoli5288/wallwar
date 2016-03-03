@@ -32,4 +32,8 @@ public enum Rank {
         return colour;
     }
 
+    public static Rank getRank(int i) {
+        return values()[i];
+    }
+
 }
