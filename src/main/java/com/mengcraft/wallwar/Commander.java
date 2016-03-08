@@ -19,9 +19,10 @@ import static java.util.Arrays.asList;
  */
 public class Commander implements CommandExecutor {
 
+    private final WorldEditPlugin we = WorldEditPlugin.getPlugin(WorldEditPlugin.class);
+
     private Match match;
     private Main main;
-    private WorldEditPlugin we;
 
     @Override
     public boolean onCommand(CommandSender p, Command cmd, String s, String[] args) {
@@ -35,6 +36,9 @@ public class Commander implements CommandExecutor {
 
     private boolean process(Player p, Iterator<String> it) {
         String sub = it.next();
+        if (sub.equals("get-debug")) {
+            return getDebug(p);
+        }
         if (sub.equals("set-lobby")) {
             return setLobby(p);
         }
@@ -62,11 +66,17 @@ public class Commander implements CommandExecutor {
         return false;
     }
 
+    private boolean getDebug(Player p) {
+        p.sendMessage(match.toString());
+        return true;
+    }
+
     private boolean setSave(Player p) {
         boolean b = match.check();
         if (b) {
             match.save();
             match.getLand().save();
+            match.getLand().saveRegion();
             main.saveConfig();
         } else {
             p.sendMessage("§4Command error! Not configured yet.");
@@ -95,7 +105,7 @@ public class Commander implements CommandExecutor {
     }
 
     private boolean setLobby(Player p) {
-        boolean b = p.getWorld() != match.getLand().getLevel();
+        boolean b = match.getLobby() == null;
         if (b) {
             match.setLobby(p.getLocation());
         } else {
@@ -110,10 +120,9 @@ public class Commander implements CommandExecutor {
         if (b) {
             Selection selection = we.getSelection(p);
             if (selection != null) {
-                match.getLand().getWallSet().add(new Area(
+                match.getLand().getWallSet().add(Area.of(
                         selection.getMinimumPoint(),
-                        selection.getMaximumPoint(),
-                        null
+                        selection.getMaximumPoint()
                 ));
             } else {
                 p.sendMessage("§4Command error! Not selected.");
@@ -129,10 +138,9 @@ public class Commander implements CommandExecutor {
         if (b) {
             Selection selection = we.getSelection(p);
             if (selection != null) {
-                match.getLand().setArea(parseInt(it.next()), new Area(
+                match.getLand().setArea(parseInt(it.next()), Area.of(
                         selection.getMinimumPoint(),
-                        selection.getMaximumPoint(),
-                        null
+                        selection.getMaximumPoint()
                 ));
             } else {
                 p.sendMessage("§4Command error! Not selected.");
@@ -174,8 +182,7 @@ public class Commander implements CommandExecutor {
     }
 
     private boolean setLevel(Player p) {
-        boolean b = match.getLand().getLevel() == null &&
-                p.getWorld() != match.getLobby();
+        boolean b = match.getLand().getLevel() == null;
         if (b) {
             match.getLand().setLevel(p.getWorld());
         } else {
@@ -184,4 +191,11 @@ public class Commander implements CommandExecutor {
         return b;
     }
 
+    public void setMatch(Match match) {
+        this.match = match;
+    }
+
+    public void setMain(Main main) {
+        this.main = main;
+    }
 }

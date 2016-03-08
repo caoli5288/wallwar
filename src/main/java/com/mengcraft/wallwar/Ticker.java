@@ -1,5 +1,8 @@
 package com.mengcraft.wallwar;
 
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+
 /**
  * Created on 16-2-25.
  */
@@ -15,7 +18,7 @@ public class Ticker implements Runnable {
     @Override
     public void run() {
         if (match.isRunning()) {
-            if (match.hasFinish()) {
+            if (match.isEnd()) {
                 processEndOf();
             } else {
                 process();
@@ -42,14 +45,20 @@ public class Ticker implements Runnable {
         match.getWaiter().forEach(p -> {
             match.addMember(p, roller.next());
             match.tpToSpawn(p);
+            p.setGameMode(GameMode.SURVIVAL);
+            p.setFlying(false);
         });
+        match.setRunning(true);
+        match.getWaiter().clear();
     }
 
     private void endOfMatch() {
         main.getServer().getOnlinePlayers().forEach(p -> {
             main.tpToLobby(p);
         });
-        main.getServer().shutdown();
+        main.getServer().getScheduler().runTaskLater(main, () -> {
+            main.getServer().shutdown();
+        }, 10);
     }
 
     private void process() {
@@ -57,29 +66,28 @@ public class Ticker implements Runnable {
             wall--;
             if (wall == 0) {
                 match.getLand().boomWall();
+                match.getMapper().keySet().forEach(p -> {
+                    p.resetTitle();
+                    p.sendTitle(ChatColor.BLUE + "战墙正开始倒塌", ChatColor.YELLOW + "岩浆将开始蔓延");
+
+                });
+            }
+        } else if (lava > 0) {
+            lava--;
+            if (lava == 0) {
+                match.getLand().bootLava();
             }
         } else {
-            if (lava > 0) {
-                lava--;
-                if (lava == 0) {
-                    match.getLand().bootLava();
-                }
-            } else {
-                lava = match.getLand().getLava();
-            }
+            lava = match.getLava();
         }
-    }
 
-    public Match getMatch() {
-        return match;
     }
 
     public void setMatch(Match match) {
         this.match = match;
-    }
-
-    public Main getMain() {
-        return main;
+        this.wait = match.getWait();
+        this.wall = match.getWall();
+        this.lava = match.getLava();
     }
 
     public void setMain(Main main) {
@@ -104,6 +112,16 @@ public class Ticker implements Runnable {
         if (wait == 0) {
             endOfMatch();
         }
+    }
+
+    @Override
+    public String toString() {
+        return ("Ticker{" +
+                "match=" + match +
+                ", wait=" + wait +
+                ", wall=" + wall +
+                ", lava=" + lava +
+                '}');
     }
 
 }

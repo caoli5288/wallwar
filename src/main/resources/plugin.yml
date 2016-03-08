@@ -14,5 +14,4 @@ permissions:
     default: op
 
 depend:
-- ScoreboardLib
 - WorldEdit

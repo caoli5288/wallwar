@@ -1,5 +1,6 @@
 package com.mengcraft.wallwar;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,6 +39,10 @@ public class Executor implements Listener {
         }
         match.clearUp(p);
         match.checkUp();
+
+        p.resetTitle();
+        p.sendTitle(ChatColor.BLUE + "你在游戏中死亡", ChatColor.YELLOW + "你进入观战模式");
+
     }
 
     @EventHandler
@@ -69,6 +74,30 @@ public class Executor implements Listener {
         if (!match.isRankArea(event.getPlayer(), event.getBlock().getLocation())) {
             event.setCancelled(true);
         }
+    }
+
+    public Ticker getTicker() {
+        return ticker;
+    }
+
+    public void setTicker(Ticker ticker) {
+        this.ticker = ticker;
+    }
+
+    public Match getMatch() {
+        return match;
+    }
+
+    public void setMatch(Match match) {
+        this.match = match;
+    }
+
+    public Main getMain() {
+        return main;
+    }
+
+    public void setMain(Main main) {
+        this.main = main;
     }
 
 }

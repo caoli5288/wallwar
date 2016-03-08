@@ -7,18 +7,21 @@ import org.bukkit.ChatColor;
  */
 public enum Rank {
 
-    NONE(ChatColor.BOLD),
-    BLUE(ChatColor.BLUE),
-    AQUA(ChatColor.AQUA),
-    GRAY(ChatColor.GRAY),
-    GOLD(ChatColor.GOLD);
+    NONE(ChatColor.BOLD, "观"),
+    BLUE(ChatColor.BLUE, "蓝"),
+    AQUA(ChatColor.AQUA, "绿"),
+    GRAY(ChatColor.GRAY, "灰"),
+    GOLD(ChatColor.GOLD, "黄");
 
-    Rank(ChatColor colour) {
-        this.colour = colour;
-    }
+    private final ChatColor colour;
+    private final String tag;
 
-    private ChatColor colour;
     private int number;
+
+    Rank(ChatColor colour, String tag) {
+        this.colour = colour;
+        this.tag = tag;
+    }
 
     public int getNumber() {
         return number;
@@ -34,6 +37,10 @@ public enum Rank {
 
     public static Rank getRank(int i) {
         return values()[i];
+    }
+
+    public String getTag() {
+        return tag;
     }
 
 }

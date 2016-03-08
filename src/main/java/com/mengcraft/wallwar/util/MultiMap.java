@@ -94,4 +94,8 @@ public class MultiMap<K, V> {
         return list.add(value);
     }
 
+    public Map<K, List<V>> getMap() {
+        return map;
+    }
+
 }

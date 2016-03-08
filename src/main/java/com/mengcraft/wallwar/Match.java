@@ -1,8 +1,8 @@
 package com.mengcraft.wallwar;
 
-import com.google.gson.JsonObject;
 import com.mengcraft.wallwar.level.Land;
 import com.mengcraft.wallwar.util.MultiMap;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,27 +19,29 @@ import java.util.Set;
  */
 public class Match {
 
-    private MultiMap<Rank, Player> map;
-    private Map<Player, Rank> mapper;
+    private final MultiMap<Rank, Player> map;
+    private final Map<Player, Rank> mapper;
+
+    private final Set<Player> waiter;
+    private final Set<Player> viewer;
 
     private Location lobby;
     private Main main;
     private Land land;
-
-    private Set<Player> waiter;
-    private Set<Player> viewer;
-    private Set<Player> winner;
+    private Rank rank;
 
     private int wait;
     private int wall;
     private int lava;
+
+    private boolean running;
+    private boolean end;
 
     public Match() {
         this.map = new MultiMap<>(new EnumMap<>(Rank.class));
         this.mapper = new HashMap<>();
         this.waiter = new HashSet<>();
         this.viewer = new HashSet<>();
-        this.winner = new HashSet<>();
     }
 
     public boolean check() {
@@ -46,45 +49,60 @@ public class Match {
     }
 
     public void checkUp() {
-        if (Main.DEBUG) {
-            main.getLogger().info("DEBUG #1 Check if game end.");
-        }
         HashSet<Rank> set = new HashSet<>(mapper.values());
         if (set.size() < 2) {
-            if (Main.DEBUG) {
-                main.getLogger().info("DEBUG #2 Game is end!");
-                main.getLogger().info("DEBUG #3 List winner!");
-            }
-            set.forEach(rank -> winner.addAll(map.get(rank)));
+            set.forEach(rank -> {
+                setRank(rank);
+            });
+            processEnd();
+            setEnd(true);
         }
     }
 
-    public void clearUp(Player p) {
-        if (Main.DEBUG) {
-            main.getLogger().info("DEBUG #3 Clear up player " + p.getName() + ".");
-        }
-        if (mapper.containsKey(p)) {
-            addViewer(p);
-            if (Main.DEBUG) {
-                main.getLogger().info("DEBUG #3 He is player.");
+    private void processEnd() {
+        map.getMap().forEach((r, list) -> {
+            if (getRank().equals(r)) {
+                processWin(list);
+            } else {
+                processFail(list);
             }
+        });
+    }
+
+    private static void processFail(List<Player> list) {
+        list.forEach(p -> {
+            p.setGameMode(GameMode.SPECTATOR);
+            p.resetTitle();
+            p.sendTitle(ChatColor.BLUE + "很可惜你失败了", ChatColor.YELLOW + "请等待传送大厅");
+        });
+    }
+
+    private static void processWin(List<Player> list) {
+        list.forEach(p -> {
+            p.setGameMode(GameMode.SPECTATOR);
+            p.resetTitle();
+            p.sendTitle(ChatColor.BLUE + "赢得了最终胜利", ChatColor.YELLOW + "请等待传送大厅");
+        });
+    }
+
+    public void clearUp(Player p) {
+        if (mapper.containsKey(p)) {
             mapper.remove(p).addNumber(-1);
         } else if (viewer.contains(p)) {
-            if (Main.DEBUG) {
-                main.getLogger().info("DEBUG #3 He is viewer.");
-            }
             viewer.remove(p);
         } else {
-            if (Main.DEBUG) {
-                main.getLogger().info("DEBUG #3 He is waiter.");
-            }
             waiter.remove(p);
         }
     }
 
     public void addMember(Player p, Rank rank) {
+        p.resetTitle();
+        p.sendTitle(ChatColor.BLUE + "游戏已经开始了", ChatColor.YELLOW + "你的队伍是" + rank.getTag() + '队');
+
         mapper.put(p, rank);
         map.put(rank, p);
+
+        rank.addNumber(1);
     }
 
     public void tpToSpawn(Player p) {
@@ -92,30 +110,22 @@ public class Match {
     }
 
     public void addViewer(Player p) {
-        if (Main.DEBUG) {
-            main.getLogger().info("DEBUG #4 Makeup a viewer " + p.getName() + ".");
-        }
-        Location spawn = land.getArea(Rank.NONE).getSpawn();
-        if (p.getLocation().getWorld() != spawn.getWorld()) {
-            p.teleport(spawn);
-        }
-        if (p.getGameMode() != GameMode.SPECTATOR) {
-            p.setGameMode(GameMode.SPECTATOR);
-            p.setHealth(p.getMaxHealth());
-        }
+        p.teleport(land.getArea(Rank.NONE).getSpawn());
+        p.setGameMode(GameMode.SPECTATOR);
+        p.setHealth(p.getMaxHealth());
+
         viewer.add(p);
     }
 
     public void addWaiter(Player p) {
+        p.resetTitle();
+        p.sendTitle(ChatColor.BLUE + "你加入到排队中", ChatColor.YELLOW + "游戏正等待开始");
+
+        p.teleport(lobby);
+        p.setGameMode(GameMode.SURVIVAL);
+        p.setFlying(false);
+
         waiter.add(p);
-    }
-
-    public void setViewer(Set<Player> viewer) {
-        this.viewer = viewer;
-    }
-
-    public Set<Player> getWinner() {
-        return winner;
     }
 
     public Location getLobby() {
@@ -124,10 +134,6 @@ public class Match {
 
     public void setLobby(Location lobby) {
         this.lobby = lobby;
-    }
-
-    public Set<Player> getViewer() {
-        return viewer;
     }
 
     public Set<Player> getWaiter() {
@@ -142,28 +148,16 @@ public class Match {
         this.land = land;
     }
 
-    public MultiMap<Rank, Player> getMap() {
-        return map;
+    public Rank getRank() {
+        return rank;
     }
 
-    public void setMap(MultiMap<Rank, Player> map) {
-        this.map = map;
-    }
-
-    public Map<Player, Rank> getMapper() {
-        return mapper;
-    }
-
-    public boolean isFighter(Player p) {
-        return mapper.get(p) != null;
-    }
-
-    public boolean hasFinish() {
-        return !winner.isEmpty();
+    public void setRank(Rank rank) {
+        this.rank = rank;
     }
 
     public boolean isRunning() {
-        return !mapper.isEmpty();
+        return running;
     }
 
     public boolean isRankArea(Player p, Location loc) {
@@ -178,10 +172,6 @@ public class Match {
             return mapper.get(o) == mapper.get(other);
         }
         return false;
-    }
-
-    public void setWaiter(Set<Player> waiter) {
-        this.waiter = waiter;
     }
 
     public int getWait() {
@@ -200,12 +190,32 @@ public class Match {
         this.wall = wall;
     }
 
-    public int getLava() {
-        return lava;
+    public void setMain(Main main) {
+        this.main = main;
     }
 
     public void setLava(int lava) {
         this.lava = lava;
+    }
+
+    public int getLava() {
+        return lava;
+    }
+
+    public Map<Player, Rank> getMapper() {
+        return mapper;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    public boolean isEnd() {
+        return end;
+    }
+
+    public void setEnd(boolean end) {
+        this.end = end;
     }
 
     public boolean isTouchMaxSize() {
@@ -217,7 +227,7 @@ public class Match {
     }
 
     public void load() {
-        setLobby(toLocation(main.getConfig().getString("match.lobby")));
+        setLobby((Location) main.getConfig().get("match.lobby"));
         setWait(main.getConfig().getInt("match.time.wait"));
         setWall(main.getConfig().getInt("match.time.wall"));
         setLava(main.getConfig().getInt("match.time.lava"));
@@ -228,19 +238,20 @@ public class Match {
         main.getConfig().set("match.time.wait", wait);
         main.getConfig().set("match.time.wall", wall);
         main.getConfig().set("match.time.lava", lava);
-
     }
 
-    private Location toLocation(String o) {
-        return toLocation(Main.GSON.fromJson(o, JsonObject.class));
-    }
-
-    private Location toLocation(JsonObject object) {
-        return new Location(main.getServer().getWorld(object.get("level").getAsString()),
-                object.get("x").getAsDouble(),
-                object.get("y").getAsDouble(),
-                object.get("z").getAsDouble()
-        );
+    @Override
+    public String toString() {
+        return ("Match{" +
+                "mapper=" + mapper +
+                ", lobby=" + lobby +
+                ", waiter=" + waiter +
+                ", viewer=" + viewer +
+                ", land=" + land +
+                ", wait=" + wait +
+                ", wall=" + wall +
+                ", lava=" + lava +
+                '}');
     }
 
 }

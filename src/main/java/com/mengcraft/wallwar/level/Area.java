@@ -1,9 +1,15 @@
 package com.mengcraft.wallwar.level;
 
+import com.google.gson.JsonObject;
 import com.mengcraft.wallwar.Main;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -23,9 +29,9 @@ public class Area implements Iterable<Location> {
     }
 
     public boolean contains(Location loc) {
-        return ((offset.getX() > 0 ? compareX(loc) > 0 : compareX(loc) < 0) &&
-                (offset.getY() > 0 ? compareY(loc) > 0 : compareY(loc) < 0) &&
-                (offset.getZ() > 0 ? compareZ(loc) > 0 : compareZ(loc) < 0)
+        return ((offset.getX() > 0 ? compareX(loc) > 0 : offset.getX() < 0 && compareX(loc) < 0) &&
+                (offset.getY() > 0 ? compareY(loc) > 0 : offset.getY() < 0 && compareY(loc) < 0) &&
+                (offset.getZ() > 0 ? compareZ(loc) > 0 : offset.getZ() < 0 && compareZ(loc) < 0)
         );
     }
 
@@ -94,21 +100,20 @@ public class Area implements Iterable<Location> {
     }
 
     public static Location toLocation(World world, Map<String, Number> map) {
-        return new Location(world,
+        return map != null ? new Location(world,
                 map.get("x").doubleValue(),
                 map.get("y").doubleValue(),
                 map.get("z").doubleValue()
-        );
+        ) : null;
     }
 
-    public static String toString(Location in) {
-        return ("{\"x\":" +
-                in.getX() +
-                ",\"y\":" +
-                in.getY() +
-                ",\"z\":" +
-                in.getZ() +
-                "}");
+    @SuppressWarnings("unchecked")
+    public static Map<String, Number> toMap(Location in) {
+        Map<String, Number> object = new HashMap<>();
+        object.put("x", in.getX());
+        object.put("y", in.getY());
+        object.put("z", in.getZ());
+        return object;
     }
 
     @SuppressWarnings("unchecked")
@@ -122,23 +127,38 @@ public class Area implements Iterable<Location> {
 
     @SuppressWarnings("unchecked")
     public static Area toArea(World world, String in) {
-        return toArea(world, Main.GSON.fromJson(in, Map.class));
+        return toArea(world, (JSONObject) JSONValue.parse(in));
     }
 
-    @Override
     public String toString() {
-        return ("{\"base\":" +
-                toString(base) +
-                ",\"offset\":" +
-                toString(offset) +
-                ",\"spawn\":" +
-                toString(spawn) +
-                "}");
+        Map<String, Object> object = new HashMap<>();
+        object.put("base", toMap(base));
+        object.put("offset", toMap(offset));
+        if (spawn != null) {
+            object.put("spawn", toMap(spawn));
+        }
+        return Main.GSON.toJson(object);
+    }
+
+    public AreaIterator getIterator() {
+        return new AreaIterator(base, base.clone().add(offset));
+    }
+
+    public Collection<Location> getCollection() {
+        ArrayList<Location> list = new ArrayList<>();
+        iterator().forEachRemaining(loc -> {
+            list.add(loc);
+        });
+        return list;
     }
 
     @Override
     public Iterator<Location> iterator() {
-        return new AreaIterator(base, base.clone().add(offset));
+        return getIterator();
+    }
+
+    public static Area of(Location left, Location right) {
+        return new Area(left, right.subtract(left), null);
     }
 
 }
