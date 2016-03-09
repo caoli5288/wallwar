@@ -7,9 +7,9 @@ public class RankRoller {
 
     public static final Rank[] RANK_ARRAY = {
             Rank.BLUE,
-            Rank.AQUA,
-            Rank.GRAY,
-            Rank.GOLD,
+            Rank.GREEN,
+            Rank.RED,
+            Rank.YELLOW,
     };
 
     private int cursor;

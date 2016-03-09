@@ -32,6 +32,11 @@
             <artifactId>worldedit</artifactId>
             <version>5.5.8</version>
         </dependency>
+        <dependency>
+            <groupId>me.tigerhix.lib</groupId>
+            <artifactId>scoreboard</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -8,10 +8,10 @@ import org.bukkit.ChatColor;
 public enum Rank {
 
     NONE(ChatColor.BOLD, "观"),
-    BLUE(ChatColor.BLUE, "蓝"),
-    AQUA(ChatColor.AQUA, "绿"),
-    GRAY(ChatColor.GRAY, "灰"),
-    GOLD(ChatColor.GOLD, "黄");
+    BLUE(ChatColor.DARK_BLUE, "蓝"),
+    GREEN(ChatColor.GREEN, "绿"),
+    RED(ChatColor.RED, "红"),
+    YELLOW(ChatColor.YELLOW, "黄");
 
     private final ChatColor colour;
     private final String tag;

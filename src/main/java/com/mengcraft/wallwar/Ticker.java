@@ -69,7 +69,6 @@ public class Ticker implements Runnable {
                 match.getMapper().keySet().forEach(p -> {
                     p.resetTitle();
                     p.sendTitle(ChatColor.BLUE + "战墙正开始倒塌", ChatColor.YELLOW + "岩浆将开始蔓延");
-
                 });
             }
         } else if (lava > 0) {
@@ -99,6 +98,10 @@ public class Ticker implements Runnable {
             wait = match.getWait();
         }
         wait--;
+        match.getWaiter().forEach(p -> {
+            p.resetTitle();
+            p.sendTitle(ChatColor.BLUE + "游戏马上就开始", ChatColor.YELLOW + "预计需等待" + wait + "秒");
+        });
         if (wait == 0) {
             startMatch();
         }

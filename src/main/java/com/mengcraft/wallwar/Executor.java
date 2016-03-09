@@ -1,5 +1,7 @@
 package com.mengcraft.wallwar;
 
+import me.tigerhix.lib.scoreboard.ScoreboardLib;
+import me.tigerhix.lib.scoreboard.type.Scoreboard;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,7 +18,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
  */
 public class Executor implements Listener {
 
-    private Ticker ticker;
+    private StatusBoard board;
     private Match match;
     private Main main;
 
@@ -28,7 +30,18 @@ public class Executor implements Listener {
         } else {
             match.addWaiter(p);
         }
-        // 更新积分板信息
+        main.runTask(() -> {
+            WallUser user = main.getDatabase().find(WallUser.class, p.getUniqueId());
+            if (user != null) {
+                main.getUserMap().put(user.getId(), user);
+            } else {
+                main.createUser(p.getUniqueId());
+            }
+        });
+        Scoreboard scoreboard = ScoreboardLib.createScoreboard(p);
+        scoreboard.setHandler(board)
+                .setUpdateInterval(10);
+        scoreboard.activate();
     }
 
     @EventHandler
@@ -43,6 +56,8 @@ public class Executor implements Listener {
         p.resetTitle();
         p.sendTitle(ChatColor.BLUE + "你在游戏中死亡", ChatColor.YELLOW + "你进入观战模式");
 
+        p.sendMessage(ChatColor.BLUE + "你在游戏中死亡");
+        p.sendMessage(ChatColor.YELLOW + "你进入观战模式");
     }
 
     @EventHandler
@@ -76,24 +91,12 @@ public class Executor implements Listener {
         }
     }
 
-    public Ticker getTicker() {
-        return ticker;
-    }
-
-    public void setTicker(Ticker ticker) {
-        this.ticker = ticker;
-    }
-
-    public Match getMatch() {
-        return match;
+    public void setBoard(StatusBoard board) {
+        this.board = board;
     }
 
     public void setMatch(Match match) {
         this.match = match;
-    }
-
-    public Main getMain() {
-        return main;
     }
 
     public void setMain(Main main) {

@@ -1,1 +1,6 @@
 lobby: "lobby"
+message:
+  scoreboard:
+    title: "&6Welcome %s!"
+    tail: "&6Sample tail"
+    match: "&6Sample match"

@@ -17,10 +17,10 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-import static com.mengcraft.wallwar.Main.DEBUG;
 import static com.mengcraft.wallwar.level.Area.toArea;
+import static com.mengcraft.wallwar.util.FileUtil.copy;
+import static com.mengcraft.wallwar.util.FileUtil.delete;
 
 /**
  * Created on 16-2-25.
@@ -118,7 +118,7 @@ public class Land {
 
     public void saveRegion() {
         try {
-            FileUtil.copy(level.getWorldFolder(), new File(main.getDataFolder(), level.getName()));
+            copy(level.getWorldFolder(), new File(main.getDataFolder(), level.getName()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -135,18 +135,19 @@ public class Land {
     public void loadRegion() {
         String name = main.getConfig().getString("match.land.name");
         File file = new File(main.getServer().getWorldContainer(), name);
-        if (DEBUG) {
-            main.getLogger().info("Restore region " + name + '.');
-        }
         main.getServer().unloadWorld(name, false);
         try {
-            FileUtil.delete(file);
-            FileUtil.copy(new File(main.getDataFolder(), name), file);
+            delete(file);
+            copy(new File(main.getDataFolder(), name), file);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         World world = main.getServer().createWorld(new WorldCreator(name));
         world.setAutoSave(false);
+    }
+
+    public int getLava() {
+        return lava;
     }
 
     public void load() {

@@ -8,11 +8,13 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static com.mengcraft.wallwar.util.CollectionUtil.forEach;
 
 /**
  * Created on 16-2-25.
@@ -39,7 +41,7 @@ public class Match {
 
     public Match() {
         this.map = new MultiMap<>(new EnumMap<>(Rank.class));
-        this.mapper = new HashMap<>();
+        this.mapper = new ConcurrentHashMap<>();
         this.waiter = new HashSet<>();
         this.viewer = new HashSet<>();
     }
@@ -50,7 +52,7 @@ public class Match {
 
     public void checkUp() {
         HashSet<Rank> set = new HashSet<>(mapper.values());
-        if (set.size() < 2) {
+        if (running && set.size() < 2) {
             set.forEach(rank -> {
                 setRank(rank);
             });
@@ -61,7 +63,7 @@ public class Match {
 
     private void processEnd() {
         map.getMap().forEach((r, list) -> {
-            if (getRank().equals(r)) {
+            if (r.equals(rank)) {
                 processWin(list);
             } else {
                 processFail(list);
@@ -70,18 +72,24 @@ public class Match {
     }
 
     private static void processFail(List<Player> list) {
-        list.forEach(p -> {
+        forEach(list, p -> p.isOnline(), p -> {
             p.setGameMode(GameMode.SPECTATOR);
             p.resetTitle();
-            p.sendTitle(ChatColor.BLUE + "很可惜你失败了", ChatColor.YELLOW + "请等待传送大厅");
+            p.sendTitle(ChatColor.BLUE + "你在比赛中失败", ChatColor.YELLOW + "请等待传送大厅");
+
+            p.sendMessage(ChatColor.BLUE + "你在比赛中失败");
+            p.sendMessage(ChatColor.YELLOW + "请等待传送大厅");
         });
     }
 
     private static void processWin(List<Player> list) {
-        list.forEach(p -> {
+        forEach(list, p -> p.isOnline(), p -> {
             p.setGameMode(GameMode.SPECTATOR);
             p.resetTitle();
-            p.sendTitle(ChatColor.BLUE + "赢得了最终胜利", ChatColor.YELLOW + "请等待传送大厅");
+            p.sendTitle(ChatColor.BLUE + "你在比赛中胜利", ChatColor.YELLOW + "请等待传送大厅");
+
+            p.sendMessage(ChatColor.BLUE + "你在比赛中胜利");
+            p.sendMessage(ChatColor.YELLOW + "请等待传送大厅");
         });
     }
 
@@ -98,6 +106,9 @@ public class Match {
     public void addMember(Player p, Rank rank) {
         p.resetTitle();
         p.sendTitle(ChatColor.BLUE + "游戏已经开始了", ChatColor.YELLOW + "你的队伍是" + rank.getTag() + '队');
+
+        p.sendMessage(ChatColor.BLUE + "游戏已经开始了");
+        p.sendMessage(ChatColor.YELLOW + "你的队伍是" + rank.getTag() + '队');
 
         mapper.put(p, rank);
         map.put(rank, p);
@@ -121,6 +132,9 @@ public class Match {
         p.resetTitle();
         p.sendTitle(ChatColor.BLUE + "你加入到排队中", ChatColor.YELLOW + "游戏正等待开始");
 
+        p.sendMessage(ChatColor.BLUE + "你加入到排队中");
+        p.sendMessage(ChatColor.YELLOW + "游戏正等待开始");
+
         p.teleport(lobby);
         p.setGameMode(GameMode.SURVIVAL);
         p.setFlying(false);
@@ -140,6 +154,10 @@ public class Match {
         return waiter;
     }
 
+    public Set<Player> getViewer() {
+        return viewer;
+    }
+
     public Land getLand() {
         return land;
     }
@@ -148,8 +166,8 @@ public class Match {
         this.land = land;
     }
 
-    public Rank getRank() {
-        return rank;
+    public Rank getRank(Player p) {
+        return mapper.get(p);
     }
 
     public void setRank(Rank rank) {
@@ -161,17 +179,11 @@ public class Match {
     }
 
     public boolean isRankArea(Player p, Location loc) {
-        if (mapper.containsKey(p)) {
-            return land.getArea(mapper.get(p)).contains(loc);
-        }
-        return false;
+        return mapper.containsKey(p) && land.getArea(mapper.get(p)).contains(loc);
     }
 
     public boolean isSameRank(Object o, Object other) {
-        if (mapper.containsKey(o)) { // NPE
-            return mapper.get(o) == mapper.get(other);
-        }
-        return false;
+        return mapper.containsKey(o) && mapper.get(o) == mapper.get(other);
     }
 
     public int getWait() {
@@ -218,12 +230,24 @@ public class Match {
         this.end = end;
     }
 
+    public Rank getRank() {
+        return rank;
+    }
+
+    public boolean isMember(Player p) {
+        return mapper.containsKey(p);
+    }
+
     public boolean isTouchMaxSize() {
         return waiter.size() >= land.getMaxSize();
     }
 
     public boolean isTouchMinSize() {
         return waiter.size() >= land.getMinSize();
+    }
+
+    public String getMessage(String s) {
+        return main.getConfig().getString("message." + s);
     }
 
     public void load() {
@@ -238,6 +262,10 @@ public class Match {
         main.getConfig().set("match.time.wait", wait);
         main.getConfig().set("match.time.wall", wall);
         main.getConfig().set("match.time.lava", lava);
+    }
+
+    public WallUser getUser(Player p) {
+        return main.getUserMap().get(p.getUniqueId());
     }
 
     @Override

@@ -15,3 +15,5 @@ permissions:
 
 depend:
 - WorldEdit
+- ScoreboardLib
+- SimpleORM
