@@ -30,22 +30,25 @@ public class Main extends JavaPlugin {
         saveConfig();
 
         if (getConfig().getConfigurationSection("match") != null) {
-            Match match = new Match();
             Land land = new Land();
             land.setMain(this);
             land.load();
+
+            Match match = new Match();
             match.setLand(land);
             match.setMain(this);
             match.load();
 
-            Executor executor = new Executor();
             StatusBoard board = new StatusBoard(match);
-            Ticker ticker = new Ticker();
-            ticker.setMain(this);
-            ticker.setMatch(match);
+
+            Executor executor = new Executor();
             executor.setBoard(board);
             executor.setMatch(match);
             executor.setMain(this);
+
+            Ticker ticker = new Ticker();
+            ticker.setMain(this);
+            ticker.setMatch(match);
 
             getServer().getScheduler().runTaskTimer(this, ticker, 20, 20);
             getServer().getPluginManager().registerEvents(executor, this);

@@ -106,10 +106,6 @@ public class Land {
         main.getConfig().set("match.size.max", maxSize);
     }
 
-    public int getLava() {
-        return lava;
-    }
-
     public void load() {
         setLevel(main.getServer().getWorld(main.getConfig().getString("match.land.name")));
         for (String line : main.getConfig().getStringList("match.land.wall")) {
@@ -120,6 +116,10 @@ public class Land {
         }
         setMinSize(main.getConfig().getInt("match.size.min"));
         setMaxSize(main.getConfig().getInt("match.size.max"));
+    }
+
+    public int getLava() {
+        return lava;
     }
 
     public void setMain(Main main) {
