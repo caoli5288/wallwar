@@ -33,7 +33,6 @@ public class Main extends JavaPlugin {
             Match match = new Match();
             Land land = new Land();
             land.setMain(this);
-            land.loadRegion();
             land.load();
             match.setLand(land);
             match.setMain(this);

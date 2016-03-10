@@ -1,5 +1,6 @@
 package com.mengcraft.wallwar;
 
+import com.mengcraft.maprestore.MapRestore;
 import com.mengcraft.wallwar.level.Area;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
@@ -8,6 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Iterator;
 
@@ -19,7 +21,8 @@ import static java.util.Arrays.asList;
  */
 public class Commander implements CommandExecutor {
 
-    private final WorldEditPlugin we = WorldEditPlugin.getPlugin(WorldEditPlugin.class);
+    private final WorldEditPlugin we = JavaPlugin.getPlugin(WorldEditPlugin.class);
+    private final MapRestore restore = JavaPlugin.getPlugin(MapRestore.class);
 
     private Match match;
     private Main main;
@@ -74,9 +77,9 @@ public class Commander implements CommandExecutor {
     private boolean setSave(Player p) {
         boolean b = match.check();
         if (b) {
+            restore.addMap(match.getLand().getLevel());
             match.save();
             match.getLand().save();
-            match.getLand().saveRegion();
             main.saveConfig();
         } else {
             p.sendMessage("§4Command error! Not configured yet.");

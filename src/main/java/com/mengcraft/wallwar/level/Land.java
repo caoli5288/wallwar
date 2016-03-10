@@ -2,25 +2,15 @@ package com.mengcraft.wallwar.level;
 
 import com.mengcraft.wallwar.Main;
 import com.mengcraft.wallwar.Rank;
-import com.mengcraft.wallwar.util.FileUtil;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.WorldCreator;
-import org.bukkit.block.Block;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static com.mengcraft.wallwar.level.Area.toArea;
-import static com.mengcraft.wallwar.util.FileUtil.copy;
-import static com.mengcraft.wallwar.util.FileUtil.delete;
 
 /**
  * Created on 16-2-25.
@@ -62,18 +52,10 @@ public class Land {
     }
 
     private void processLava(Area area) {
-        Iterator<Location> it = area.getSub(AreaFace.BASE,
+        new LavaDriver(area.getSub(AreaFace.BASE,
                 lava,
                 1
-        ).iterator();
-        for (Block b; it.hasNext(); ) {
-            b = it.next().getBlock();
-            if (b.getType() == Material.WATER) {
-                b.setType(Material.LAVA);
-            } else if (b.getType() == Material.AIR) {
-                b.setType(Material.LAVA);
-            }
-        }
+        ).getIterator()).runTaskTimer(main, 0, 1);
     }
 
     public List<Area> getWallSet() {
@@ -116,34 +98,12 @@ public class Land {
         return areaMap.get(rank);
     }
 
-    public void saveRegion() {
-        try {
-            copy(level.getWorldFolder(), new File(main.getDataFolder(), level.getName()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void save() {
         main.getConfig().set("match.land.name", level.getName());
         main.getConfig().set("match.land.wall", toString(wallSet));
         main.getConfig().set("match.land.area", toString(areaMap.values()));
         main.getConfig().set("match.size.min", minSize);
         main.getConfig().set("match.size.max", maxSize);
-    }
-
-    public void loadRegion() {
-        String name = main.getConfig().getString("match.land.name");
-        File file = new File(main.getServer().getWorldContainer(), name);
-        main.getServer().unloadWorld(name, false);
-        try {
-            delete(file);
-            copy(new File(main.getDataFolder(), name), file);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        World world = main.getServer().createWorld(new WorldCreator(name));
-        world.setAutoSave(false);
     }
 
     public int getLava() {
