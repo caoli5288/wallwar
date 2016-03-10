@@ -32,15 +32,17 @@ public class StatusBoard implements ScoreboardHandler {
             if (match.isEnd()) {
                 return createEndEntry();
             } else {
-                return createRunningEntry(p);
+                return createRunningEntry(match.getRank(p));
             }
         } else {
             return createWaitEntry(match.getUser(p));
         }
     }
 
-    private List<Entry> createRunningEntry(Player p) {
+    private List<Entry> createRunningEntry(Rank rank) {
         EntryBuilder builder = new EntryBuilder();
+        builder.next("");
+        builder.next("&6你的队伍: " + (rank.getColour() + rank.getTag() + '队'));
         builder.next("");
         builder.next("&6地图: " + match.getMessage("scoreboard.match"));
         builder.next("&6存活: " + match.getMapper().size());
@@ -51,6 +53,7 @@ public class StatusBoard implements ScoreboardHandler {
         builder.next("&1蓝队: " + Rank.BLUE.getNumber());
         builder.next("&a绿队: " + Rank.GREEN.getNumber());
         builder.next("");
+        builder.next("&6战墙倒塌: " + match.getWall());
         builder.next("&6岩浆高度: " + match.getLand().getLava());
         builder.next("");
         builder.next(tail.next());
@@ -66,6 +69,7 @@ public class StatusBoard implements ScoreboardHandler {
         builder.next("&3获胜队伍: " + match.getRank().getColour() + match.getRank().getTag() + '队');
         builder.next("");
         builder.next("&7========");
+        builder.next("");
         builder.next(tail.next());
 
         return builder.build();

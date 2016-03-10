@@ -12,7 +12,6 @@ public class Ticker implements Runnable {
     private Main main;
 
     private int wait;
-    private int wall;
     private int lava;
 
     @Override
@@ -62,9 +61,9 @@ public class Ticker implements Runnable {
     }
 
     private void process() {
-        if (wall > 0) {
-            wall--;
-            if (wall == 0) {
+        if (match.getWall() > 0) {
+            match.setWall(match.getWall() - 1);
+            if (match.getWall() == 0) {
                 match.getLand().boomWall();
                 match.getMapper().keySet().forEach(p -> {
                     p.resetTitle();
@@ -87,7 +86,6 @@ public class Ticker implements Runnable {
     public void setMatch(Match match) {
         this.match = match;
         this.wait = match.getWait();
-        this.wall = match.getWall();
         this.lava = match.getLava();
     }
 
@@ -124,7 +122,6 @@ public class Ticker implements Runnable {
         return ("Ticker{" +
                 "match=" + match +
                 ", wait=" + wait +
-                ", wall=" + wall +
                 ", lava=" + lava +
                 '}');
     }
