@@ -13,6 +13,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.ServerListPingEvent;
 
 /**
  * Created on 16-2-25.
@@ -22,6 +23,15 @@ public class Executor implements Listener {
     private StatusBoard board;
     private Match match;
     private Main main;
+
+    @EventHandler
+    public void handle(ServerListPingEvent event) {
+        if (match.isRunning()) {
+            event.setMotd(ChatColor.RED + "游戏中");
+        } else {
+            event.setMotd(ChatColor.GREEN + "等待中");
+        }
+    }
 
     @EventHandler
     public void handle(PlayerJoinEvent event) {
