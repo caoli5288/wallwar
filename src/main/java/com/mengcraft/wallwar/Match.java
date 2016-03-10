@@ -2,6 +2,7 @@ package com.mengcraft.wallwar;
 
 import com.mengcraft.wallwar.level.Land;
 import com.mengcraft.wallwar.util.MultiMap;
+import com.nametagedit.plugin.NametagEdit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -15,6 +16,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.mengcraft.wallwar.util.CollectionUtil.forEach;
+import static com.nametagedit.plugin.NametagEdit.getApi;
 
 /**
  * Created on 16-2-25.
@@ -71,7 +73,7 @@ public class Match {
         });
     }
 
-    private static void processFail(List<Player> list) {
+    private void processFail(List<Player> list) {
         forEach(list, p -> p.isOnline(), p -> {
             p.setGameMode(GameMode.SPECTATOR);
             p.resetTitle();
@@ -82,7 +84,7 @@ public class Match {
         });
     }
 
-    private static void processWin(List<Player> list) {
+    private void processWin(List<Player> list) {
         forEach(list, p -> p.isOnline(), p -> {
             p.setGameMode(GameMode.SPECTATOR);
             p.resetTitle();
@@ -90,6 +92,8 @@ public class Match {
 
             p.sendMessage(ChatColor.BLUE + "你在比赛中胜利");
             p.sendMessage(ChatColor.YELLOW + "请等待传送大厅");
+
+            getUser(p).addWinning();
         });
     }
 
@@ -110,8 +114,12 @@ public class Match {
         p.sendMessage(ChatColor.BLUE + "游戏已经开始了");
         p.sendMessage(ChatColor.YELLOW + "你的队伍是" + rank.getTag() + '队');
 
+        getApi().setPrefix(p, rank.getColour().toString());
+
         mapper.put(p, rank);
         map.put(rank, p);
+
+        getUser(p).addJoining();
 
         rank.addNumber(1);
     }
@@ -183,7 +191,7 @@ public class Match {
     }
 
     public boolean isSameRank(Object o, Object other) {
-        return mapper.containsKey(o) && mapper.get(o) == mapper.get(other);
+        return mapper.get(o) == mapper.get(other);
     }
 
     public int getWait() {
@@ -280,6 +288,10 @@ public class Match {
                 ", wall=" + wall +
                 ", lava=" + lava +
                 '}');
+    }
+
+    public boolean isNotRunning() {
+        return !running;
     }
 
 }

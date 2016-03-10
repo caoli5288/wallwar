@@ -105,11 +105,11 @@ public class Main extends JavaPlugin {
         getServer().getScheduler().runTaskAsynchronously(this, runnable);
     }
 
-    public void createUser(UUID id) {
+    public void createUser(Player p) {
         WallUser user = getDatabase().createEntityBean(WallUser.class);
-        user.setId(id);
-
-        userMap.put(id, user);
+        user.setId(p.getUniqueId());
+        user.setName(p.getName());
+        userMap.put(p.getUniqueId(), user);
     }
 
     public static final Gson GSON = new Gson();

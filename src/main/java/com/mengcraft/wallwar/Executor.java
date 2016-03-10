@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -35,7 +36,7 @@ public class Executor implements Listener {
             if (user != null) {
                 main.getUserMap().put(user.getId(), user);
             } else {
-                main.createUser(p.getUniqueId());
+                main.createUser(p);
             }
         });
         Scoreboard scoreboard = ScoreboardLib.createScoreboard(p);
@@ -53,6 +54,11 @@ public class Executor implements Listener {
         match.clearUp(p);
         match.checkUp();
 
+        match.getUser(p).addDead();
+        if (p.getKiller() != null) {
+            match.getUser(p.getKiller()).addKilled();
+        }
+
         p.resetTitle();
         p.sendTitle(ChatColor.BLUE + "你在游戏中死亡", ChatColor.YELLOW + "你进入观战模式");
 
@@ -68,6 +74,13 @@ public class Executor implements Listener {
         }
         match.clearUp(p);
         match.checkUp();
+    }
+
+    @EventHandler
+    public void handle(EntityDamageEvent event) {
+        if (match.isNotRunning()) {
+            event.setDamage(0);
+        }
     }
 
     @EventHandler

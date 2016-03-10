@@ -16,4 +16,4 @@ permissions:
 depend:
 - WorldEdit
 - ScoreboardLib
-- SimpleORM
+- NametagEdit

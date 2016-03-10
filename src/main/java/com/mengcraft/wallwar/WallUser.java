@@ -13,6 +13,8 @@ public class WallUser {
     @Id
     private UUID id;
 
+    private String name;
+
     private int joining;
     private int winning;
 
@@ -25,6 +27,14 @@ public class WallUser {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getJoining() {
@@ -57,6 +67,22 @@ public class WallUser {
 
     public void setDead(int dead) {
         this.dead = dead;
+    }
+
+    public void addDead() {
+        setDead(getDead() + 1);
+    }
+
+    public void addKilled() {
+        setKilled(getKilled() + 1);
+    }
+
+    public void addWinning() {
+        setWinning(getWinning() + 1);
+    }
+
+    public void addJoining() {
+        setJoining(getJoining() + 1);
     }
 
 }

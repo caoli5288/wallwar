@@ -70,6 +70,8 @@ public class Ticker implements Runnable {
                     p.resetTitle();
                     p.sendTitle(ChatColor.BLUE + "战墙正开始倒塌", ChatColor.YELLOW + "岩浆将开始蔓延");
                 });
+            } else {
+                // TODO
             }
         } else if (lava > 0) {
             lava--;
