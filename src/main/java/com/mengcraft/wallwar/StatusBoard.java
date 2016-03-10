@@ -42,7 +42,7 @@ public class StatusBoard implements ScoreboardHandler {
     private List<Entry> createRunningEntry(Rank rank) {
         EntryBuilder builder = new EntryBuilder();
         builder.next("");
-        builder.next("&6你的队伍: " + (rank.getColour() + rank.getTag() + '队'));
+        builder.next("&6你的队伍: " + (rank != null ? (rank.getColour() + rank.getTag() + '队') : "观众"));
         builder.next("");
         builder.next("&6地图: " + match.getMessage("scoreboard.match"));
         builder.next("&6存活: " + match.getMapper().size());
