@@ -33,12 +33,14 @@ public class WallBoomer extends BukkitRunnable {
     }
 
     private void process(Location next) {
-        next.getWorld().playEffect(next, Effect.EXPLOSION_LARGE, 1);
-        next.getWorld().playEffect(next, Effect.FIREWORKS_SPARK, 1);
-        if (random.nextFloat() < 0.25) {
-            next.getWorld().playSound(next, Sound.EXPLODE, 1, 1);
+        if (next.getBlock().getType() != Material.AIR) {
+            next.getWorld().playEffect(next, Effect.EXPLOSION_LARGE, 1);
+            next.getWorld().playEffect(next, Effect.FIREWORKS_SPARK, 1);
+            if (random.nextFloat() < 0.25) {
+                next.getWorld().playSound(next, Sound.EXPLODE, 1, 1);
+            }
+            next.getBlock().setType(Material.AIR);
         }
-        next.getBlock().setType(Material.AIR);
     }
 
 }
