@@ -113,6 +113,8 @@ public class Match {
         p.sendMessage(ChatColor.BLUE + "游戏已经开始了");
         p.sendMessage(ChatColor.YELLOW + "你的队伍是" + rank.getTag() + '队');
 
+        p.getInventory().clear();
+
         getApi().setPrefix(p, rank.getColour().toString());
 
         mapper.put(p, rank);
