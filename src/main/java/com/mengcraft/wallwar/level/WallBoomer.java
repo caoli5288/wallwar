@@ -45,15 +45,15 @@ public class WallBoomer extends BukkitRunnable {
     private void process(Location next) {
         if (next.getBlock().getType() != Material.AIR) {
             boom(next);
+        } else {
+            run();
         }
     }
 
     private void boom(Location next) {
-        if (random.nextFloat() < 0.15) {
-            next.getWorld().createExplosion(next, 4);
-        } else {
-            next.getBlock().setType(Material.AIR);
-            next.getWorld().playEffect(next, Effect.EXPLOSION_LARGE, 1);
+        next.getBlock().setType(Material.AIR);
+        next.getWorld().playEffect(next, Effect.EXPLOSION_LARGE, 1);
+        if (random.nextFloat() < 0.25) {
             next.getWorld().playSound(next, Sound.EXPLODE, 1, 1);
         }
     }

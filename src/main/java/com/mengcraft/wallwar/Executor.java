@@ -27,15 +27,6 @@ public class Executor implements Listener {
     private Main main;
 
     @EventHandler
-    public void handle(BlockExplodeEvent event) {
-        main.getServer().getPluginManager().callEvent(new EntityExplodeEvent(null,
-                event.getBlock().getLocation(),
-                event.blockList(),
-                event.getYield())
-        );
-    }
-
-    @EventHandler
     public void handle(ServerListPingEvent event) {
         if (match.isRunning()) {
             event.setMotd(ChatColor.RED + "游戏中");
