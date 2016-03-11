@@ -7,12 +7,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
@@ -25,6 +24,13 @@ public class Executor implements Listener {
     private StatusBoard board;
     private Match match;
     private Main main;
+
+    @EventHandler
+    public void handle(InventoryOpenEvent event) {
+        if (match.isNotRunning()) {
+            event.setCancelled(true);
+        }
+    }
 
     @EventHandler
     public void handle(ServerListPingEvent event) {
