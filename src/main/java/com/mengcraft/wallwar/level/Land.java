@@ -38,7 +38,7 @@ public class Land {
 
     public void boomWall() {
         wallSet.forEach(area -> {
-            new WallBoomer(area.getCollection()).runTaskTimer(main, 0, 1);
+            new WallBoomer(area).runTaskTimer(main, 0, 1);
         });
     }
 

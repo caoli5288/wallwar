@@ -7,10 +7,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Created on 16-2-23.
@@ -135,7 +136,17 @@ public class Area implements Iterable<Location> {
         return new AreaIterator(base, base.clone().add(offset));
     }
 
-    public Collection<Location> getCollection() {
+    public List<Location> getList(Predicate<Location> p) {
+        ArrayList<Location> list = new ArrayList<>();
+        iterator().forEachRemaining(loc -> {
+            if (p.test(loc)) {
+                list.add(loc);
+            }
+        });
+        return list;
+    }
+
+    public List<Location> getList() {
         ArrayList<Location> list = new ArrayList<>();
         iterator().forEachRemaining(loc -> {
             list.add(loc);
