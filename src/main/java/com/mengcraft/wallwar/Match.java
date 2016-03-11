@@ -2,7 +2,6 @@ package com.mengcraft.wallwar;
 
 import com.mengcraft.wallwar.level.Land;
 import com.mengcraft.wallwar.util.MultiMap;
-import com.nametagedit.plugin.NametagEdit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
