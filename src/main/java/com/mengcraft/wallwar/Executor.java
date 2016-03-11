@@ -12,9 +12,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
+
+import java.util.Set;
 
 /**
  * Created on 16-2-25.
@@ -26,7 +30,35 @@ public class Executor implements Listener {
     private Main main;
 
     @EventHandler
+    public void handle(AsyncPlayerChatEvent event) {
+        if (match.isRunning() && !match.isEnd()) {
+            Rank rank = match.getRank(event.getPlayer());
+            if (Rank.NONE.equals(rank)) {
+                Set<Player> set = event.getRecipients();
+                set.clear();
+                set.addAll(match.getViewer());
+            } else if (event.getMessage().startsWith("!") && event.getPlayer().hasPermission("wall.chat.shout")) {
+                event.setCancelled(true);
+                event.getPlayer().sendMessage(ChatColor.DARK_RED + "你没有权限这样做！");
+            } else {
+                Set<Player> set = event.getRecipients();
+                set.clear();
+                set.addAll(match.getTeam(rank));
+                set.addAll(match.getViewer());
+            }
+            event.setFormat("[" + rank.getColour() + rank.getTag() + ChatColor.RESET + "][%1$s] %2$s");
+        }
+    }
+
+    @EventHandler
     public void handle(InventoryOpenEvent event) {
+        if (match.isNotRunning()) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void handle(PlayerInteractEvent event) {
         if (match.isNotRunning()) {
             event.setCancelled(true);
         }
