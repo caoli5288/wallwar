@@ -52,8 +52,13 @@ public class Match {
     }
 
     public void checkUp() {
-        HashSet<Rank> set = new HashSet<>(mapper.values());
-        if (running && set.size() < 2) {
+        if (running && !end) {
+            checkUp(new HashSet<>(mapper.values()));
+        }
+    }
+
+    private void checkUp(HashSet<Rank> set) {
+        if (set.size() < 2) {
             set.forEach(rank -> {
                 setRank(rank);
             });
@@ -241,10 +246,6 @@ public class Match {
 
     public Rank getRank() {
         return rank;
-    }
-
-    public boolean isMember(Player p) {
-        return mapper.containsKey(p);
     }
 
     public boolean isTouchMaxSize() {
