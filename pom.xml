@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.sk89q</groupId>
             <artifactId>worldedit</artifactId>
-            <version>5.5.8</version>
+            <version>6.1</version>
         </dependency>
         <dependency>
             <groupId>me.tigerhix.lib</groupId>

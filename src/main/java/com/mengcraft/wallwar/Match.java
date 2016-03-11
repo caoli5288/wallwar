@@ -135,11 +135,13 @@ public class Match {
     }
 
     public void addViewer(Player p) {
+        getApi().setPrefix(p, Rank.NONE.getColour().toString());
+
+        viewer.add(p);
+
         p.teleport(land.getArea(Rank.NONE).getSpawn());
         p.setGameMode(GameMode.SPECTATOR);
         p.setHealth(p.getMaxHealth());
-
-        viewer.add(p);
     }
 
     public void addWaiter(Player p) {
