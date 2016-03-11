@@ -1,8 +1,10 @@
 package com.mengcraft.wallwar.level;
 
 import com.mengcraft.wallwar.util.SetPicker;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
@@ -42,7 +44,17 @@ public class WallBoomer extends BukkitRunnable {
 
     private void process(Location next) {
         if (next.getBlock().getType() != Material.AIR) {
-            next.getWorld().createExplosion(next , 3F);
+            boom(next);
+        }
+    }
+
+    private void boom(Location next) {
+        if (random.nextFloat() < 0.15) {
+            next.getWorld().createExplosion(next, 4);
+        } else {
+            next.getBlock().setType(Material.AIR);
+            next.getWorld().playEffect(next, Effect.EXPLOSION_LARGE, 1);
+            next.getWorld().playSound(next, Sound.EXPLODE, 1, 1);
         }
     }
 
