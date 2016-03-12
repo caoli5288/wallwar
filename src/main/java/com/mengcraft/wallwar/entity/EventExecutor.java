@@ -44,7 +44,7 @@ public class EventExecutor implements Listener {
                 Set<Player> set = event.getRecipients();
                 set.clear();
                 set.addAll(match.getViewer());
-            } else if (event.getMessage().startsWith("!") && event.getPlayer().hasPermission("wall.chat.shout")) {
+            } else if (event.getMessage().startsWith("!") && !event.getPlayer().hasPermission("wall.chat.shout")) {
                 event.setCancelled(true);
                 event.getPlayer().sendMessage(ChatColor.DARK_RED + "你没有权限这样做！");
             } else {
