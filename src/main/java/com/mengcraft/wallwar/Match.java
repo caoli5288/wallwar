@@ -1,10 +1,13 @@
 package com.mengcraft.wallwar;
 
+import com.mengcraft.wallwar.entity.WallUser;
 import com.mengcraft.wallwar.level.Land;
 import com.mengcraft.wallwar.util.MultiMap;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -184,7 +187,7 @@ public class Match {
     }
 
     public Rank getRank(Player p) {
-        return mapper.get(p);
+        return mapper.containsKey(p) ? mapper.get(p) : Rank.NONE;
     }
 
     public void setRank(Rank rank) {
@@ -195,12 +198,16 @@ public class Match {
         return running;
     }
 
-    public boolean isRankArea(Player p, Location loc) {
-        return mapper.containsKey(p) && land.getArea(mapper.get(p)).contains(loc);
+    public boolean isRanked(Block b) {
+        return land.isRanked(b.getLocation());
     }
 
-    public boolean isSameRank(Object o, Object other) {
-        return mapper.get(o) == mapper.get(other);
+    public boolean isRanked(Player p, Block b) {
+        return mapper.containsKey(p) && land.getArea(mapper.get(p)).contains(b.getLocation());
+    }
+
+    public boolean isTeammate(Entity p, Entity other) {
+        return mapper.get(p) == mapper.get(other);
     }
 
     public int getWait() {

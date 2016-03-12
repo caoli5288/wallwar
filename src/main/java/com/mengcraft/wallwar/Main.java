@@ -3,6 +3,9 @@ package com.mengcraft.wallwar;
 import com.google.gson.Gson;
 import com.mengcraft.wallwar.db.EbeanHandler;
 import com.mengcraft.wallwar.db.EbeanManager;
+import com.mengcraft.wallwar.entity.EventExecutor;
+import com.mengcraft.wallwar.entity.StatusBoard;
+import com.mengcraft.wallwar.entity.WallUser;
 import com.mengcraft.wallwar.level.Land;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,7 +44,7 @@ public class Main extends JavaPlugin {
 
             StatusBoard board = new StatusBoard(match);
 
-            Executor executor = new Executor();
+            EventExecutor executor = new EventExecutor();
             executor.setBoard(board);
             executor.setMatch(match);
             executor.setMain(this);
@@ -83,7 +86,19 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getDatabase().save(userMap.values());
+        getServer().getOnlinePlayers().forEach(p -> {
+            WallUser removed = userMap.remove(p.getUniqueId());
+            if (removed != null) {
+                getDatabase().save(removed);
+            }
+        });
+    }
+
+    public void saveBean(Player p) {
+        WallUser removed = userMap.remove(p.getUniqueId());
+        if (removed != null) getServer().getScheduler().runTaskAsynchronously(this, () -> {
+            getDatabase().save(removed);
+        });
     }
 
     public void tpToLobby(Player p) {

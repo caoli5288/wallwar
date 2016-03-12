@@ -2,6 +2,7 @@ package com.mengcraft.wallwar.level;
 
 import com.mengcraft.wallwar.Main;
 import com.mengcraft.wallwar.Rank;
+import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.util.ArrayList;
@@ -34,6 +35,17 @@ public class Land {
                 level != null &&
                 minSize > 0 &&
                 maxSize > 0);
+    }
+
+    public boolean isRanked(Location loc) {
+        for (Map.Entry<Rank, Area> entry : areaMap.entrySet()) {
+            if (entry.getKey().equals(Rank.NONE)) {
+                ;
+            } else if (entry.getValue().contains(loc)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void boomWall() {

@@ -1,4 +1,4 @@
-package com.mengcraft.wallwar;
+package com.mengcraft.wallwar.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

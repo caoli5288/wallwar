@@ -1,4 +1,6 @@
-package com.mengcraft.wallwar;
+package com.mengcraft.wallwar.entity;
+
+import com.mengcraft.wallwar.Rank;
 
 /**
  * Created on 16-2-29.

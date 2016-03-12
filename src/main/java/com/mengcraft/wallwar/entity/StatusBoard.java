@@ -1,5 +1,7 @@
-package com.mengcraft.wallwar;
+package com.mengcraft.wallwar.entity;
 
+import com.mengcraft.wallwar.Match;
+import com.mengcraft.wallwar.Rank;
 import me.tigerhix.lib.scoreboard.common.EntryBuilder;
 import me.tigerhix.lib.scoreboard.common.animate.HighlightedString;
 import me.tigerhix.lib.scoreboard.type.Entry;
