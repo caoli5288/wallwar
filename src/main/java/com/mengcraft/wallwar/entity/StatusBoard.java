@@ -52,7 +52,7 @@ public class StatusBoard implements ScoreboardHandler {
         builder.next("");
         builder.next("&c红队: " + Rank.RED.getNumber());
         builder.next("&e黄队: " + Rank.YELLOW.getNumber());
-        builder.next("&1蓝队: " + Rank.BLUE.getNumber());
+        builder.next("&b蓝队: " + Rank.BLUE.getNumber());
         builder.next("&a绿队: " + Rank.GREEN.getNumber());
         builder.next("");
         builder.next("&6战墙倒塌: " + match.getWall());
