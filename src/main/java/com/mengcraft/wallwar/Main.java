@@ -52,6 +52,8 @@ public class Main extends JavaPlugin {
             Ticker ticker = new Ticker();
             ticker.setMain(this);
             ticker.setMatch(match);
+            ticker.setWait(match.getWait());
+            ticker.setWaitExit(15);
 
             getServer().getScheduler().runTaskTimer(this, ticker, 20, 20);
             getServer().getPluginManager().registerEvents(executor, this);
