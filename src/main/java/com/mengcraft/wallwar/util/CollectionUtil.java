@@ -1,6 +1,7 @@
 package com.mengcraft.wallwar.util;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -9,12 +10,20 @@ import java.util.function.Predicate;
  */
 public final class CollectionUtil {
 
-    public static <T> void forEach(Collection<T> collection, Predicate<T> predicate, Consumer<T> consumer) {
-        for (T element : collection) {
-            if (predicate.test(element)) {
-                consumer.accept(element);
+    public static <T> void forEach(Collection<T> i, Predicate<T> p, Consumer<T> c) {
+        i.forEach(t -> {
+            if (p.test(t)) {
+                c.accept(t);
             }
-        }
+        });
+    }
+
+    public static <T> void forEachRemaining(Iterator<T> i, Predicate<T> p, Consumer<T> c) {
+        i.forEachRemaining(t -> {
+            if (p.test(t)) {
+                c.accept(t);
+            }
+        });
     }
 
 }

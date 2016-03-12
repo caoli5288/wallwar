@@ -25,8 +25,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+
+import static com.mengcraft.wallwar.util.CollectionUtil.forEach;
 
 /**
  * Created on 16-2-25.
@@ -151,22 +154,20 @@ public class EventExecutor implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void handle(BlockExplodeEvent event) {
-        Iterator<Block> it = event.blockList().iterator();
-        it.forEachRemaining(block -> {
-            if (!match.isRanked(block)) {
-                it.remove();
-            }
+        List<Block> list = new ArrayList<>();
+        forEach(event.blockList(), b -> match.isRanked(b), b -> {
+            list.add(b);
         });
+        event.blockList().removeAll(list);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void handle(EntityExplodeEvent event) {
-        Iterator<Block> it = event.blockList().iterator();
-        it.forEachRemaining(block -> {
-            if (!match.isRanked(block)) {
-                it.remove();
-            }
+        List<Block> list = new ArrayList<>();
+        forEach(event.blockList(), b -> match.isRanked(b), b -> {
+            list.add(b);
         });
+        event.blockList().removeAll(list);
     }
 
     @EventHandler
