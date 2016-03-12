@@ -172,7 +172,7 @@ public class EventExecutor implements Listener {
     public void handle(BlockBreakEvent event) {
         if (match.isNotRunning()) {
             event.setCancelled(true);
-        } else if (isRanked(event.getPlayer(), event.getBlock())) {
+        } else if (isNotRanked(event.getPlayer(), event.getBlock())) {
             event.setCancelled(true);
         }
     }
@@ -181,12 +181,12 @@ public class EventExecutor implements Listener {
     public void handle(BlockPlaceEvent event) {
         if (match.isNotRunning()) {
             event.setCancelled(true);
-        } else if (isRanked(event.getPlayer(), event.getBlock())) {
+        } else if (isNotRanked(event.getPlayer(), event.getBlock())) {
             event.setCancelled(true);
         }
     }
 
-    private boolean isRanked(Player p, Block b) {
+    private boolean isNotRanked(Player p, Block b) {
         if (match.getWall() != 0) {
             return !match.isRanked(p, b);
         }
