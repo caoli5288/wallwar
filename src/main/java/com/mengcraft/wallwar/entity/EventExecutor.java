@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
@@ -148,7 +149,7 @@ public class EventExecutor implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void handle(BlockExplodeEvent event) {
         Iterator<Block> it = event.blockList().iterator();
         it.forEachRemaining(block -> {
@@ -158,7 +159,7 @@ public class EventExecutor implements Listener {
         });
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void handle(EntityExplodeEvent event) {
         Iterator<Block> it = event.blockList().iterator();
         it.forEachRemaining(block -> {
