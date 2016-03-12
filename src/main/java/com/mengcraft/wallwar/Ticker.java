@@ -24,16 +24,12 @@ public class Ticker implements Runnable {
             } else {
                 process();
             }
+        } else if (match.isTouchMaxSize()) {
+            startMatch();
+        } else if (match.isTouchMinSize()) {
+            processStart();
         } else {
-            if (match.isTouchMaxSize()) {
-                startMatch();
-            } else {
-                if (match.isTouchMinSize()) {
-                    processStart();
-                } else {
-                    setWait(match.getWait());
-                }
-            }
+            setWait(match.getWait());
         }
     }
 
