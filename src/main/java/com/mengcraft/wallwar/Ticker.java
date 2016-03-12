@@ -74,6 +74,8 @@ public class Ticker implements Runnable {
             lava--;
             if (lava == 0) {
                 match.getLand().bootLava();
+            } else {
+                // TODO
             }
         } else {
             setLava(match.getLava());
