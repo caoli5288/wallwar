@@ -20,10 +20,10 @@ public class Action {
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
         engine.put("version", server.getClass().getName().split("\\.")[3]);
         engine.eval("" +
-                "var CraftChatMessage = Java.type(\"org.bukkit.craftbukkit.\" + version + \".util.CraftChatMessage\");\n" +
+                "var ChatComponentText = Java.type(\"net.minecraft.server.\" + version + \".ChatComponentText\");\n" +
                 "var PacketPlayOutChat = Java.type(\"net.minecraft.server.\" + version + \".PacketPlayOutChat\");\n" +
                 "function toPacket(text) {\n" +
-                "    return new PacketPlayOutChat(CraftChatMessage.fromString(text)[0], 2);\n" +
+                "    return new PacketPlayOutChat(new ChatComponentText(text), 2);\n" +
                 "}\n" +
                 "function sendPacket(p, packet) {\n" +
                 "    p.getHandle().playerConnection.sendPacket(packet);\n" +
