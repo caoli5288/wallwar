@@ -5,6 +5,8 @@ import com.mengcraft.wallwar.entity.RankRoller;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 
+import static com.mengcraft.wallwar.util.CollectionUtil.forEach;
+
 /**
  * Created on 16-2-25.
  */
@@ -85,6 +87,7 @@ public class Ticker implements Runnable {
                     p.sendTitle(ChatColor.BLUE + "战墙正开始倒塌", ChatColor.YELLOW + "岩浆将开始蔓延");
                 });
             }
+            tickMember();
         } else if (lava > 0) {
             lava--;
             if (lava == 0) {
@@ -93,6 +96,12 @@ public class Ticker implements Runnable {
         } else {
             setLava(match.getLava());
         }
+    }
+
+    private void tickMember() {
+        forEach(match.getMapper().keySet(), p -> !match.isRanked(p, p.getLocation()), p -> {
+            match.tpToSpawn(p);
+        });
     }
 
     public void setLava(int lava) {

@@ -212,6 +212,10 @@ public class Match {
         return mapper.containsKey(p) && land.getArea(mapper.get(p)).contains(b.getLocation());
     }
 
+    public boolean isRanked(Player p, Location loc) {
+        return mapper.containsKey(p) && land.getArea(mapper.get(p)).contains(loc);
+    }
+
     public boolean isTeammate(Entity p, Entity other) {
         return mapper.get(p) == mapper.get(other);
     }
