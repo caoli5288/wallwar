@@ -1,6 +1,7 @@
 package com.mengcraft.wallwar;
 
 import com.mengcraft.maprestore.MapRestore;
+import com.mengcraft.wallwar.entity.Action;
 import com.mengcraft.wallwar.level.Area;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;

@@ -1,9 +1,8 @@
-package com.mengcraft.wallwar.entity;
+package com.mengcraft.wallwar;
 
-import com.mengcraft.wallwar.Action;
-import com.mengcraft.wallwar.Main;
-import com.mengcraft.wallwar.Match;
-import com.mengcraft.wallwar.Rank;
+import com.mengcraft.wallwar.entity.Action;
+import com.mengcraft.wallwar.entity.StatusBoard;
+import com.mengcraft.wallwar.entity.WallUser;
 import me.tigerhix.lib.scoreboard.ScoreboardLib;
 import me.tigerhix.lib.scoreboard.type.Scoreboard;
 import org.bukkit.ChatColor;
@@ -35,7 +34,7 @@ import static com.mengcraft.wallwar.util.CollectionUtil.forEach;
 /**
  * Created on 16-2-25.
  */
-public class EventExecutor implements Listener {
+public class Executor implements Listener {
 
     private StatusBoard board;
     private Match match;

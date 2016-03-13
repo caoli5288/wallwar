@@ -3,7 +3,7 @@ package com.mengcraft.wallwar;
 import com.google.gson.Gson;
 import com.mengcraft.wallwar.db.EbeanHandler;
 import com.mengcraft.wallwar.db.EbeanManager;
-import com.mengcraft.wallwar.entity.EventExecutor;
+import com.mengcraft.wallwar.entity.Action;
 import com.mengcraft.wallwar.entity.StatusBoard;
 import com.mengcraft.wallwar.entity.WallUser;
 import com.mengcraft.wallwar.level.Land;
@@ -52,7 +52,7 @@ public class Main extends JavaPlugin {
 
             StatusBoard board = new StatusBoard(match);
 
-            EventExecutor executor = new EventExecutor();
+            Executor executor = new Executor();
             executor.setBoard(board);
             executor.setMatch(match);
             executor.setMain(this);

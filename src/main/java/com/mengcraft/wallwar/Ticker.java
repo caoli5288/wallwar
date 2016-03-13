@@ -1,5 +1,6 @@
 package com.mengcraft.wallwar;
 
+import com.mengcraft.wallwar.entity.Action;
 import com.mengcraft.wallwar.entity.RankRoller;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -34,11 +35,11 @@ public class Ticker implements Runnable {
             } else {
                 setWait(match.getWait());
             }
-            tickMember();
+            tickWaiter();
         }
     }
 
-    private void tickMember() {
+    private void tickWaiter() {
         // TODO
     }
 

@@ -1,4 +1,4 @@
-package com.mengcraft.wallwar;
+package com.mengcraft.wallwar.entity;
 
 import jdk.nashorn.api.scripting.JSObject;
 import org.bukkit.ChatColor;
