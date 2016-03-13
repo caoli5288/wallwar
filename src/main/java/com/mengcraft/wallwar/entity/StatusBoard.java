@@ -49,7 +49,6 @@ public class StatusBoard implements ScoreboardHandler {
         builder.next("&6地图: " + match.getMessage("scoreboard.match"));
         builder.next("&6存活: " + match.getMapper().size());
         builder.next("&6观战: " + match.getViewer().size());
-        builder.next("");
         builder.next("&c红队: " + Rank.RED.getNumber());
         builder.next("&e黄队: " + Rank.YELLOW.getNumber());
         builder.next("&b蓝队: " + Rank.BLUE.getNumber());
