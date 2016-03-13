@@ -159,7 +159,9 @@ public class Match {
         p.setGameMode(GameMode.SURVIVAL);
         p.setFlying(false);
 
-        p.getServer().broadcastMessage("§7[§b§l梦世界§7] §6玩家§a" + p.getName() + "§6加入了游戏。§7(§3"
+        p.getServer().broadcastMessage("§7[§b§l梦世界§7] §6玩家§a"
+                + p.getName()
+                + "§6加入了游戏。§7(§3"
                 + p.getServer().getOnlinePlayers().size()
                 + "§7/§6" + land.getMaxSize() + "§7)");
 
