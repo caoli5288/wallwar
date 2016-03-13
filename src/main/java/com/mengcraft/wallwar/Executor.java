@@ -1,6 +1,5 @@
 package com.mengcraft.wallwar;
 
-import com.mengcraft.wallwar.entity.Action;
 import com.mengcraft.wallwar.entity.StatusBoard;
 import com.mengcraft.wallwar.entity.WallUser;
 import me.tigerhix.lib.scoreboard.ScoreboardLib;
@@ -39,7 +38,6 @@ public class Executor implements Listener {
     private StatusBoard board;
     private Match match;
     private Main main;
-    private Action action;
 
     @EventHandler
     public void handle(AsyncPlayerChatEvent event) {
@@ -85,13 +83,22 @@ public class Executor implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void handle(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         if (match.isRunning()) {
             match.addViewer(p);
+            event.setJoinMessage("§7[§b§l梦世界§7] §6玩家§a"
+                    + p.getName()
+                    + "§6加入了观战。");
+
         } else {
             match.addWaiter(p);
+            event.setJoinMessage("§7[§b§l梦世界§7] §6玩家§a"
+                    + p.getName()
+                    + "§6加入了游戏。§7(§3"
+                    + p.getServer().getOnlinePlayers().size()
+                    + "§7/§6" + match.getLand().getMaxSize() + "§7)");
         }
         main.runTask(() -> {
             WallUser user = main.getDatabase().find(WallUser.class, p.getUniqueId());
@@ -208,7 +215,4 @@ public class Executor implements Listener {
         this.main = main;
     }
 
-    public void setAction(Action action) {
-        this.action = action;
-    }
 }

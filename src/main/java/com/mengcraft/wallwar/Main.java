@@ -52,7 +52,6 @@ public class Main extends JavaPlugin {
             executor.setBoard(board);
             executor.setMatch(match);
             executor.setMain(this);
-            executor.setAction(action);
 
             Ticker ticker = new Ticker();
             ticker.setMain(this);
