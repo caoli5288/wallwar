@@ -10,6 +10,7 @@ import com.mengcraft.wallwar.level.Land;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.script.ScriptException;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
@@ -32,6 +33,13 @@ public class Main extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
 
+        Action action = new Action();
+        try {
+            action.init(getServer());
+        } catch (ScriptException e) {
+            throw new RuntimeException(e);
+        }
+
         if (getConfig().getConfigurationSection("match") != null) {
             Land land = new Land();
             land.setMain(this);
@@ -48,6 +56,7 @@ public class Main extends JavaPlugin {
             executor.setBoard(board);
             executor.setMatch(match);
             executor.setMain(this);
+            executor.setAction(action);
 
             Ticker ticker = new Ticker();
             ticker.setMain(this);
@@ -58,14 +67,17 @@ public class Main extends JavaPlugin {
             getServer().getScheduler().runTaskTimer(this, ticker, 20, 20);
             getServer().getPluginManager().registerEvents(executor, this);
         } else {
-            Commander commander = new Commander();
-            Match match = new Match();
             Land land = new Land();
             land.setMain(this);
+
+            Match match = new Match();
             match.setLand(land);
             match.setMain(this);
+
+            Commander commander = new Commander();
             commander.setMain(this);
             commander.setMatch(match);
+            commander.setAction(action);
 
             getCommand("wall").setExecutor(commander);
         }

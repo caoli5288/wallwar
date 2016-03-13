@@ -1,5 +1,6 @@
 package com.mengcraft.wallwar.entity;
 
+import com.mengcraft.wallwar.Action;
 import com.mengcraft.wallwar.Main;
 import com.mengcraft.wallwar.Match;
 import com.mengcraft.wallwar.Rank;
@@ -39,6 +40,7 @@ public class EventExecutor implements Listener {
     private StatusBoard board;
     private Match match;
     private Main main;
+    private Action action;
 
     @EventHandler
     public void handle(AsyncPlayerChatEvent event) {
@@ -207,4 +209,7 @@ public class EventExecutor implements Listener {
         this.main = main;
     }
 
+    public void setAction(Action action) {
+        this.action = action;
+    }
 }

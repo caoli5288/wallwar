@@ -4,6 +4,7 @@ import com.mengcraft.maprestore.MapRestore;
 import com.mengcraft.wallwar.level.Area;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,6 +27,7 @@ public class Commander implements CommandExecutor {
 
     private Match match;
     private Main main;
+    private Action action;
 
     @Override
     public boolean onCommand(CommandSender p, Command cmd, String s, String[] args) {
@@ -41,6 +43,9 @@ public class Commander implements CommandExecutor {
         String sub = it.next();
         if (sub.equals("get-debug")) {
             return getDebug(p);
+        }
+        if (sub.equals("get-action")) {
+            return getAction(p, it);
         }
         if (sub.equals("set-lobby")) {
             return setLobby(p);
@@ -65,6 +70,15 @@ public class Commander implements CommandExecutor {
         }
         if (sub.equals("set-save")) {
             return setSave(p);
+        }
+        return false;
+    }
+
+    private boolean getAction(Player p, Iterator<String> it) {
+        if (it.hasNext()) {
+            action.sendAction(p, it.next().replace('&', ChatColor.COLOR_CHAR));
+        } else {
+            action.sendAction(p, "§1This is a sample!");
         }
         return false;
     }
@@ -200,5 +214,9 @@ public class Commander implements CommandExecutor {
 
     public void setMain(Main main) {
         this.main = main;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
     }
 }
