@@ -15,6 +15,7 @@ public class Ticker implements Runnable {
     private int wait;
     private int waitExit;
     private int lava;
+    private Action action;
 
     @Override
     public void run() {
@@ -24,13 +25,28 @@ public class Ticker implements Runnable {
             } else {
                 process();
             }
-        } else if (match.isTouchMaxSize()) {
-            startMatch();
-        } else if (match.isTouchMinSize()) {
-            processStart();
+            tickViewer();
         } else {
-            setWait(match.getWait());
+            if (match.isTouchMaxSize()) {
+                startMatch();
+            } else if (match.isTouchMinSize()) {
+                processStart();
+            } else {
+                setWait(match.getWait());
+            }
+            tickMember();
         }
+    }
+
+    private void tickMember() {
+        // TODO
+    }
+
+    private void tickViewer() {
+        Object packet = action.toPacket("&3&l输入&e&l/lobby&3&l返回大厅");
+        match.getViewer().forEach(p -> {
+            action.sendPacket(p, packet);
+        });
     }
 
     public void setWait(int wait) {
@@ -67,15 +83,11 @@ public class Ticker implements Runnable {
                     p.resetTitle();
                     p.sendTitle(ChatColor.BLUE + "战墙正开始倒塌", ChatColor.YELLOW + "岩浆将开始蔓延");
                 });
-            } else {
-                // TODO
             }
         } else if (lava > 0) {
             lava--;
             if (lava == 0) {
                 match.getLand().bootLava();
-            } else {
-                // TODO
             }
         } else {
             setLava(match.getLava());
@@ -118,13 +130,8 @@ public class Ticker implements Runnable {
         }
     }
 
-    @Override
-    public String toString() {
-        return ("Ticker{" +
-                "match=" + match +
-                ", wait=" + wait +
-                ", lava=" + lava +
-                '}');
+    public void setAction(Action action) {
+        this.action = action;
     }
 
 }

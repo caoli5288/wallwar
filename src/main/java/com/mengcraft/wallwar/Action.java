@@ -1,6 +1,7 @@
 package com.mengcraft.wallwar;
 
 import jdk.nashorn.api.scripting.JSObject;
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
@@ -13,8 +14,8 @@ import javax.script.ScriptException;
  */
 public class Action {
 
-    private JSObject functionToPacket;
-    private JSObject functionSendPacket;
+    private JSObject funcToPacket;
+    private JSObject funcSendPacket;
 
     public void init(Server server) throws ScriptException {
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
@@ -29,12 +30,12 @@ public class Action {
                 "    p.getHandle().playerConnection.sendPacket(packet);\n" +
                 "}"
         );
-        setFunctionToPacket(engine.get("toPacket"));
-        setFunctionSendPacket(engine.get("sendPacket"));
+        setFuncToPacket(engine.get("toPacket"));
+        setFuncSendPacket(engine.get("sendPacket"));
     }
 
     public Object toPacket(String text) {
-        return functionToPacket.call(functionToPacket, text);
+        return funcToPacket.call(funcToPacket, ChatColor.translateAlternateColorCodes('&', text));
     }
 
     public void sendAction(Player p, String text) {
@@ -42,15 +43,15 @@ public class Action {
     }
 
     public void sendPacket(Player p, Object packet) {
-        functionSendPacket.call(functionSendPacket, p, packet);
+        funcSendPacket.call(funcSendPacket, p, packet);
     }
 
-    public void setFunctionToPacket(Object functionToPacket) {
-        this.functionToPacket = JSObject.class.cast(functionToPacket);
+    public void setFuncToPacket(Object funcToPacket) {
+        this.funcToPacket = JSObject.class.cast(funcToPacket);
     }
 
-    public void setFunctionSendPacket(Object functionSendPacket) {
-        this.functionSendPacket = JSObject.class.cast(functionSendPacket);
+    public void setFuncSendPacket(Object funcSendPacket) {
+        this.funcSendPacket = JSObject.class.cast(funcSendPacket);
     }
 
 }
