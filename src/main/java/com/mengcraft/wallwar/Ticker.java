@@ -46,7 +46,7 @@ public class Ticker implements Runnable {
     }
 
     private void tickViewer() {
-        Object packet = action.toPacket("&3&l输入&e&l/lobby&3&l返回大厅");
+        Object packet = action.toPacket(ChatColor.translateAlternateColorCodes('&', "&3&l输入&e&l/lobby&3&l返回大厅"));
         match.getViewer().forEach(p -> {
             action.sendPacket(p, packet);
         });

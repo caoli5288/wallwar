@@ -56,7 +56,7 @@ public class Executor implements Listener {
                 set.addAll(match.getTeam(rank));
                 set.addAll(match.getViewer());
             }
-            event.setFormat("[" + rank.getColour() + rank.getTag() + ChatColor.RESET + "][%1$s] %2$s");
+            event.setFormat("[" + rank.getColour() + rank.getTag() + "§r] §7%1$ §8>§7>§f> %2$s");
         }
     }
 
