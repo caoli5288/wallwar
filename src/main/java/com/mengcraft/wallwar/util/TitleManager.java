@@ -7,7 +7,6 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.util.Collection;
 import java.util.WeakHashMap;
 
 /**
@@ -54,10 +53,6 @@ public interface TitleManager {
             "}";
 
     void setTitle(Player p, Title title);
-
-    default void setTitle(Collection<Player> list, Title title) {
-        list.forEach(p -> setTitle(p, title));
-    }
 
     static TitleManager createManager(Server server) {
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
