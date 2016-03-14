@@ -125,7 +125,7 @@ public class Ticker implements Runnable {
         Title t = new Title(
                 ChatColor.BLUE + "游戏马上就开始",
                 ChatColor.YELLOW + "预计需等待" + wait + "秒",
-                1, -1, 0
+                0, 50, 10
         );
         match.getWaiter().forEach(p -> title.setTitle(p, t));
         if (wait == 0) {

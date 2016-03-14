@@ -35,7 +35,7 @@ public class Main extends JavaPlugin {
 
         if (getConfig().getConfigurationSection("match") != null) {
             Action action = Action.createAction(getServer());
-            TitleManager title = TitleManager.createManager(getServer());
+            TitleManager title = TitleManager.createManager(this);
 
             Land land = new Land();
             land.setMain(this);
@@ -65,7 +65,7 @@ public class Main extends JavaPlugin {
             getServer().getPluginManager().registerEvents(executor, this);
         } else {
             Action action = Action.createAction(getServer());
-            TitleManager title = TitleManager.createManager(getServer());
+            TitleManager title = TitleManager.createManager(this);
 
             Land land = new Land();
             land.setMain(this);

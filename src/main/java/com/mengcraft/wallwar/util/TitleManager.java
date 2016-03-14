@@ -1,13 +1,12 @@
 package com.mengcraft.wallwar.util;
 
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.util.WeakHashMap;
 
 /**
  * Created on 16-3-13.
@@ -16,51 +15,41 @@ public interface TitleManager {
 
     String SCRIPT = "" +
             "PacketPlayOutTitle = Java.type(\"net.minecraft.server.\" + version + \".PacketPlayOutTitle\");\n" +
-            "EnumTitleAction    = Java.type(\"net.minecraft.server.\" + version + \".PacketPlayOutTitle$EnumTitleAction\");\n" +
-            "ChatComponentText  = Java.type(\"net.minecraft.server.\" + version + \".ChatComponentText\");\n" +
+            "EnumTitleAction = Java.type(\"net.minecraft.server.\" + version + \".PacketPlayOutTitle$EnumTitleAction\");\n" +
+            "ChatComponentText = Java.type(\"net.minecraft.server.\" + version + \".ChatComponentText\");\n" +
             "function setTitle(p, title) {\n" +
-            "    var packet = new PacketPlayOutTitle(EnumTitleAction.RESET, null);\n" +
-            "    var packetList;\n" +
-            "    if (pool.containsKey(title)) {\n" +
-            "        packetList = pool.get(title);\n" +
+            "    if (title == null) {\n" +
+            "        sendReset(p);\n" +
             "    } else {\n" +
-            "        pool.put(title, packetList = new java.util.ArrayList());\n" +
             "        if (title.display > 0) {\n" +
-            "            packetList.add(new PacketPlayOutTitle(\n" +
-            "                    title.fadeIn,\n" +
-            "                    title.display,\n" +
-            "                    title.fadeOut\n" +
-            "                    )" +
-            "            );\n" +
+            "            sendTime(p, title);\n" +
             "        }\n" +
-            "        if (title.sub != null) {\n" +
-            "            packetList.add(new PacketPlayOutTitle(\n" +
-            "                    EnumTitleAction.SUBTITLE,\n" +
-            "                    new ChatComponentText(title.sub)\n" +
-            "                    )\n" +
-            "            );\n" +
-            "        }\n" +
-            "        if (title.title != null) {\n" +
-            "            packetList.add(new PacketPlayOutTitle(\n" +
-            "                    EnumTitleAction.TITLE,\n" +
-            "                    new ChatComponentText(title.title)\n" +
-            "                    )" +
-            "            );\n" +
-            "        }\n" +
+            "        sendSubtitle(p, title);\n" +
+            "        sendTitle(p, title);\n" +
             "    }\n" +
+            "}\n" +
+            "function sendPacket(p, packet) {\n" +
             "    p.getHandle().playerConnection.sendPacket(packet);\n" +
-            "    packetList.forEach(function(packet) {\n" +
-            "        p.getHandle().playerConnection.sendPacket(packet);\n" +
-            "    });\n" +
+            "}\n" +
+            "function sendTitle(p, title) {\n" +
+            "    sendPacket(p, new PacketPlayOutTitle(EnumTitleAction.TITLE, new ChatComponentText(title.title)));\n" +
+            "}\n" +
+            "function sendSubtitle(p, title) {\n" +
+            "    sendPacket(p, new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, new ChatComponentText(title.sub)));\n" +
+            "}\n" +
+            "function sendTime(p, title) {\n" +
+            "    sendPacket(p, new PacketPlayOutTitle(title.fadeIn, title.display, title.fadeOut));\n" +
+            "}\n" +
+            "function sendReset(p) {\n" +
+            "    sendPacket(p, new PacketPlayOutTitle(EnumTitleAction.RESET, null));\n" +
             "}";
 
     void setTitle(Player p, Title title);
 
-    static TitleManager createManager(Server server) {
+    static TitleManager createManager(Plugin plugin) {
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
         try {
-            engine.put("version", server.getClass().getName().split("\\.")[3]);
-            engine.put("pool", new WeakHashMap<>());
+            engine.put("version", plugin.getServer().getClass().getName().split("\\.")[3]);
             engine.eval(SCRIPT);
         } catch (ScriptException e) {
             throw new RuntimeException(e);
