@@ -23,9 +23,6 @@ public class Title {
     public Title(String title, String sub) {
         this.title = title;
         this.sub = sub;
-        this.fadeIn = -1;
-        this.display = -1;
-        this.fadeOut = -1;
     }
 
     public Title setFadeIn(int fadeIn) {

@@ -86,7 +86,7 @@ public class Commander implements CommandExecutor {
         if (it.hasNext()) {
             title.setTitle(p, new Title(translateAlternateColorCodes('&', it.next()), "§2This is a subtitle!"));
         } else {
-            title.setTitle(p, new Title("§1This is a title!", "§2This is a subtitle!"));
+            title.setTitle(p, new Title("§1This is a title!", "§2This is a subtitle!", 0, 20, 0));
         }
         return false;
     }

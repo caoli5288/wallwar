@@ -25,24 +25,26 @@ public interface TitleManager {
             "        packetList = pool.get(title);\n" +
             "    } else {\n" +
             "        pool.put(title, packetList = new java.util.ArrayList());\n" +
-            "        if (title.sub != null) {\n" +
+            "        if (title.display > 0) {\n" +
             "            packetList.add(new PacketPlayOutTitle(\n" +
-            "                    EnumTitleAction.SUBTITLE,\n" +
-            "                    new ChatComponentText(title.sub),\n" +
             "                    title.fadeIn,\n" +
             "                    title.display,\n" +
             "                    title.fadeOut\n" +
+            "                    )" +
+            "            );\n" +
+            "        }\n" +
+            "        if (title.sub != null) {\n" +
+            "            packetList.add(new PacketPlayOutTitle(\n" +
+            "                    EnumTitleAction.SUBTITLE,\n" +
+            "                    new ChatComponentText(title.sub)\n" +
             "                    )\n" +
             "            );\n" +
             "        }\n" +
             "        if (title.title != null) {\n" +
             "            packetList.add(new PacketPlayOutTitle(\n" +
             "                    EnumTitleAction.TITLE,\n" +
-            "                    new ChatComponentText(title.title),\n" +
-            "                    title.fadeIn,\n" +
-            "                    title.display,\n" +
-            "                    title.fadeOut\n" +
-            "                    )\n" +
+            "                    new ChatComponentText(title.title)\n" +
+            "                    )" +
             "            );\n" +
             "        }\n" +
             "    }\n" +
