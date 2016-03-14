@@ -35,6 +35,7 @@ public class Main extends JavaPlugin {
 
         if (getConfig().getConfigurationSection("match") != null) {
             Action action = Action.createAction(getServer());
+            TitleManager title = TitleManager.createManager(getServer());
 
             Land land = new Land();
             land.setMain(this);
@@ -58,6 +59,7 @@ public class Main extends JavaPlugin {
             ticker.setWait(match.getWait());
             ticker.setWaitExit(15);
             ticker.setAction(action);
+            ticker.setTitle(title);
 
             getServer().getScheduler().runTaskTimer(this, ticker, 20, 20);
             getServer().getPluginManager().registerEvents(executor, this);

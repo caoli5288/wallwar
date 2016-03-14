@@ -1,7 +1,9 @@
 package com.mengcraft.wallwar;
 
-import com.mengcraft.wallwar.util.Action;
 import com.mengcraft.wallwar.entity.RankRoller;
+import com.mengcraft.wallwar.util.Action;
+import com.mengcraft.wallwar.util.Title;
+import com.mengcraft.wallwar.util.TitleManager;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 
@@ -19,6 +21,7 @@ public class Ticker implements Runnable {
     private int waitExit;
     private int lava;
     private Action action;
+    private TitleManager title;
 
     @Override
     public void run() {
@@ -119,10 +122,11 @@ public class Ticker implements Runnable {
 
     private void processStart() {
         wait--;
-        match.getWaiter().forEach(p -> {
-            p.resetTitle();
-            p.sendTitle(ChatColor.BLUE + "游戏马上就开始", ChatColor.YELLOW + "预计需等待" + wait + "秒");
-        });
+        title.setTitle(match.getWaiter(), new Title(
+                ChatColor.BLUE + "游戏马上就开始",
+                ChatColor.YELLOW + "预计需等待" + wait + "秒",
+                0, -1, -1
+        ));
         if (wait == 0) {
             startMatch();
         }
@@ -143,4 +147,7 @@ public class Ticker implements Runnable {
         this.action = action;
     }
 
+    public void setTitle(TitleManager title) {
+        this.title = title;
+    }
 }
