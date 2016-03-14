@@ -84,10 +84,8 @@ public class Commander implements CommandExecutor {
 
     private boolean getTitle(Player p, Iterator<String> it) {
         if (it.hasNext()) {
-            title.setTitle(p);
             title.setTitle(p, new Title(translateAlternateColorCodes('&', it.next()), "§2This is a subtitle!"));
         } else {
-            title.setTitle(p);
             title.setTitle(p, new Title("§1This is a title!", "§2This is a subtitle!"));
         }
         return false;

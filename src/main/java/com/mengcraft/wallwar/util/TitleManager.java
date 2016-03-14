@@ -16,49 +16,44 @@ import java.util.WeakHashMap;
 public interface TitleManager {
 
     String SCRIPT = "" +
-            "var PacketPlayOutTitle = Java.type(\"net.minecraft.server.\" + version + \".PacketPlayOutTitle\");\n" +
-            "var EnumTitleAction    = Java.type(\"net.minecraft.server.\" + version + \".PacketPlayOutTitle$EnumTitleAction\");\n" +
-            "var ChatComponentText  = Java.type(\"net.minecraft.server.\" + version + \".ChatComponentText\");\n" +
+            "PacketPlayOutTitle = Java.type(\"net.minecraft.server.\" + version + \".PacketPlayOutTitle\");\n" +
+            "EnumTitleAction    = Java.type(\"net.minecraft.server.\" + version + \".PacketPlayOutTitle$EnumTitleAction\");\n" +
+            "ChatComponentText  = Java.type(\"net.minecraft.server.\" + version + \".ChatComponentText\");\n" +
             "function setTitle(p, title) {\n" +
-            "    if (title == null) {\n" +
-            "        p.getHandle().playerConnection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.RESET, null));\n" +
-            "    } else if (pool.containsKey(title)) {\n" +
-            "        pool.get(title).forEach(function(packet) {\n" +
-            "            p.getHandle().playerConnection.sendPacket(packet);\n" +
-            "        });\n" +
+            "    var packet = new PacketPlayOutTitle(EnumTitleAction.RESET, null);\n" +
+            "    var packetList;\n" +
+            "    if (pool.containsKey(title)) {\n" +
+            "        packetList = pool.get(title);\n" +
             "    } else {\n" +
-            "        var list = new java.util.ArrayList();\n" +
-            "        if (title.title != null) {\n" +
-            "            list.add(createPacket(EnumTitleAction.TITLE, title.title, title));\n" +
-            "        }\n" +
+            "        pool.put(title, packetList = new java.util.ArrayList());\n" +
             "        if (title.sub != null) {\n" +
-            "            list.add(createPacket(EnumTitleAction.SUBTITLE, title.sub, title));\n" +
+            "            packetList.add(new PacketPlayOutTitle(\n" +
+            "                    EnumTitleAction.SUBTITLE,\n" +
+            "                    new ChatComponentText(title.sub),\n" +
+            "                    title.fadeIn,\n" +
+            "                    title.display,\n" +
+            "                    title.fadeOut\n" +
+            "                    )\n" +
+            "            );\n" +
             "        }\n" +
-            "        list.forEach(function(packet) {\n" +
-            "            p.getHandle().playerConnection.sendPacket(packet);\n" +
-            "        });\n" +
-            "        pool.put(title, list);\n" +
+            "        if (title.title != null) {\n" +
+            "            packetList.add(new PacketPlayOutTitle(\n" +
+            "                    EnumTitleAction.TITLE,\n" +
+            "                    new ChatComponentText(title.title),\n" +
+            "                    title.fadeIn,\n" +
+            "                    title.display,\n" +
+            "                    title.fadeOut\n" +
+            "                    )\n" +
+            "            );\n" +
+            "        }\n" +
             "    }\n" +
-            "}\n" +
-            "function createPacket(type, text, title) {\n" +
-            "    return new PacketPlayOutTitle(\n" +
-            "        type,\n" +
-            "        new ChatComponentText(text),\n" +
-            "        title.fadeIn,\n" +
-            "        title.display,\n" +
-            "        title.fadeOut\n" +
-            "    )\n" +
+            "    p.getHandle().playerConnection.sendPacket(packet);\n" +
+            "    packetList.forEach(function(packet) {\n" +
+            "        p.getHandle().playerConnection.sendPacket(packet);\n" +
+            "    });\n" +
             "}";
 
     void setTitle(Player p, Title title);
-
-    default void setTitle(Player p) {
-        setTitle(p, null);
-    }
-
-    default void setTitle(Collection<Player> list) {
-        list.forEach(p -> setTitle(p));
-    }
 
     default void setTitle(Collection<Player> list, Title title) {
         list.forEach(p -> setTitle(p, title));

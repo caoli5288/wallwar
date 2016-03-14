@@ -12,6 +12,14 @@ public class Title {
     public int fadeOut;
     public int display;
 
+    public Title(String title, String sub, int fadeIn, int fadeOut, int display) {
+        this.title = title;
+        this.sub = sub;
+        this.fadeIn = fadeIn;
+        this.fadeOut = fadeOut;
+        this.display = display;
+    }
+
     public Title(String title, String sub) {
         this.title = title;
         this.sub = sub;
