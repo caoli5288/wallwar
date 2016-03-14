@@ -3,10 +3,11 @@ package com.mengcraft.wallwar;
 import com.google.gson.Gson;
 import com.mengcraft.wallwar.db.EbeanHandler;
 import com.mengcraft.wallwar.db.EbeanManager;
-import com.mengcraft.wallwar.entity.Action;
 import com.mengcraft.wallwar.entity.StatusBoard;
 import com.mengcraft.wallwar.entity.WallUser;
 import com.mengcraft.wallwar.level.Land;
+import com.mengcraft.wallwar.util.Action;
+import com.mengcraft.wallwar.util.TitleManager;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,8 +19,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-
-import static com.mengcraft.wallwar.entity.Action.createAction;
 
 /**
  * Created on 16-2-23.
@@ -35,7 +34,7 @@ public class Main extends JavaPlugin {
         saveConfig();
 
         if (getConfig().getConfigurationSection("match") != null) {
-            Action action = createAction(getServer());
+            Action action = Action.createAction(getServer());
 
             Land land = new Land();
             land.setMain(this);
@@ -63,7 +62,8 @@ public class Main extends JavaPlugin {
             getServer().getScheduler().runTaskTimer(this, ticker, 20, 20);
             getServer().getPluginManager().registerEvents(executor, this);
         } else {
-            Action action = createAction(getServer());
+            Action action = Action.createAction(getServer());
+            TitleManager title = TitleManager.createManager(getServer());
 
             Land land = new Land();
             land.setMain(this);
@@ -76,6 +76,7 @@ public class Main extends JavaPlugin {
             commander.setMain(this);
             commander.setMatch(match);
             commander.setAction(action);
+            commander.setTitle(title);
 
             getCommand("wall").setExecutor(commander);
         }

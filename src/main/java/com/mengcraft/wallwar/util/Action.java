@@ -1,4 +1,4 @@
-package com.mengcraft.wallwar.entity;
+package com.mengcraft.wallwar.util;
 
 import org.bukkit.Server;
 import org.bukkit.entity.Player;

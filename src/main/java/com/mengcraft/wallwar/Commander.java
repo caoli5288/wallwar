@@ -1,8 +1,10 @@
 package com.mengcraft.wallwar;
 
 import com.mengcraft.maprestore.MapRestore;
-import com.mengcraft.wallwar.entity.Action;
+import com.mengcraft.wallwar.util.Action;
 import com.mengcraft.wallwar.level.Area;
+import com.mengcraft.wallwar.util.Title;
+import com.mengcraft.wallwar.util.TitleManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import org.bukkit.ChatColor;
@@ -17,6 +19,7 @@ import java.util.Iterator;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
+import static org.bukkit.ChatColor.translateAlternateColorCodes;
 
 /**
  * Created on 16-3-1.
@@ -29,6 +32,7 @@ public class Commander implements CommandExecutor {
     private Match match;
     private Main main;
     private Action action;
+    private TitleManager title;
 
     @Override
     public boolean onCommand(CommandSender p, Command cmd, String s, String[] args) {
@@ -71,6 +75,20 @@ public class Commander implements CommandExecutor {
         }
         if (sub.equals("set-save")) {
             return setSave(p);
+        }
+        if (sub.equals("get-title")) {
+            return getTitle(p, it);
+        }
+        return false;
+    }
+
+    private boolean getTitle(Player p, Iterator<String> it) {
+        if (it.hasNext()) {
+            title.setTitle(p);
+            title.setTitle(p, new Title(translateAlternateColorCodes('&', it.next()), "§2This is a subtitle!"));
+        } else {
+            title.setTitle(p);
+            title.setTitle(p, new Title("§1This is a title!", "§2This is a subtitle!"));
         }
         return false;
     }
@@ -219,5 +237,9 @@ public class Commander implements CommandExecutor {
 
     public void setAction(Action action) {
         this.action = action;
+    }
+
+    public void setTitle(TitleManager title) {
+        this.title = title;
     }
 }
