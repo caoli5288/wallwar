@@ -127,7 +127,7 @@ public class Ticker implements Runnable {
                 ChatColor.YELLOW + "预计需等待" + wait + "秒",
                 0, -1, -1
         );
-        match.getViewer().forEach(p -> title.setTitle(p, t));
+        match.getWaiter().forEach(p -> title.setTitle(p, t));
         if (wait == 0) {
             startMatch();
         }
