@@ -106,7 +106,6 @@ public class Main extends JavaPlugin {
             if (removed != null) {
                 getDatabase().save(removed);
             }
-            tpToLobby(p);
         });
     }
 

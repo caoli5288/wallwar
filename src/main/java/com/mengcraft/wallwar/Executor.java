@@ -163,7 +163,7 @@ public class Executor implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void handle(BlockExplodeEvent event) {
         List<Block> list = new ArrayList<>();
-        forEach(event.blockList(), b -> match.isRanked(b), b -> {
+        forEach(event.blockList(), b -> !match.isRanked(b), b -> {
             list.add(b);
         });
         event.blockList().removeAll(list);
@@ -172,7 +172,7 @@ public class Executor implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void handle(EntityExplodeEvent event) {
         List<Block> list = new ArrayList<>();
-        forEach(event.blockList(), b -> match.isRanked(b), b -> {
+        forEach(event.blockList(), b -> !match.isRanked(b), b -> {
             list.add(b);
         });
         event.blockList().removeAll(list);
