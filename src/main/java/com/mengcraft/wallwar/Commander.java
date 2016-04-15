@@ -2,7 +2,6 @@ package com.mengcraft.wallwar;
 
 import com.mengcraft.maprestore.MapRestore;
 import com.mengcraft.wallwar.util.Action;
-import com.mengcraft.wallwar.level.Area;
 import com.mengcraft.wallwar.util.Title;
 import com.mengcraft.wallwar.util.TitleManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -17,6 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Iterator;
 
+import static com.mengcraft.wallwar.level.Area.of;
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 import static org.bukkit.ChatColor.translateAlternateColorCodes;
@@ -65,7 +65,7 @@ public class Commander implements CommandExecutor {
             return setTime(p, it);
         }
         if (sub.equals("set-area")) {
-            return setArea(p, it);
+            return setArea(p);
         }
         if (sub.equals("set-wall")) {
             return setWall(p);
@@ -121,11 +121,11 @@ public class Commander implements CommandExecutor {
     private boolean setSpawn(Player p, Iterator<String> it) {
         boolean b = it.hasNext() && p.getWorld() == match.getLand().getLevel();
         if (b) {
-            Area area = match.getLand().getArea(parseInt(it.next()));
-            if (area != null) {
+            Rank rank = Rank.getRank(parseInt(it.next()));
+            if (rank != null) {
                 Location loc = p.getLocation();
-                if (area.contains(loc)) {
-                    area.setSpawn(p.getLocation());
+                if (match.getLand().isArea(loc)) {
+                    match.getLand().setSpawn(rank, loc);
                 } else {
                     p.sendMessage("§4Command error! Not contains in area.");
                 }
@@ -154,7 +154,7 @@ public class Commander implements CommandExecutor {
         if (b) {
             Selection selection = we.getSelection(p);
             if (selection != null) {
-                match.getLand().getWallSet().add(Area.of(
+                match.getLand().getWallSet().add(of(
                         selection.getMinimumPoint(),
                         selection.getMaximumPoint()
                 ));
@@ -167,12 +167,12 @@ public class Commander implements CommandExecutor {
         return b;
     }
 
-    private boolean setArea(Player p, Iterator<String> it) {
-        boolean b = it.hasNext() && p.getWorld() == match.getLand().getLevel();
+    private boolean setArea(Player p) {
+        boolean b = p.getWorld() == match.getLand().getLevel();
         if (b) {
             Selection selection = we.getSelection(p);
             if (selection != null) {
-                match.getLand().setArea(parseInt(it.next()), Area.of(
+                match.getLand().addArea(of(
                         selection.getMinimumPoint(),
                         selection.getMaximumPoint()
                 ));

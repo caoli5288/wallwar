@@ -26,11 +26,10 @@ import static com.nametagedit.plugin.NametagEdit.getApi;
  */
 public class Match {
 
-    private final MultiMap<Rank, Player> map;
-    private final Map<Player, Rank> mapper;
-
-    private final Set<Player> waiter;
-    private final Set<Player> viewer;
+    private final MultiMap<Rank, Player> map = new MultiMap<>(new EnumMap<>(Rank.class));
+    private final Map<Player, Rank> mapper = new ConcurrentHashMap<>();
+    private final Set<Player> waiter = new HashSet<>();
+    private final Set<Player> viewer = new HashSet<>();
 
     private Location lobby;
     private Main main;
@@ -43,13 +42,6 @@ public class Match {
 
     private boolean running;
     private boolean end;
-
-    public Match() {
-        this.map = new MultiMap<>(new EnumMap<>(Rank.class));
-        this.mapper = new ConcurrentHashMap<>();
-        this.waiter = new HashSet<>();
-        this.viewer = new HashSet<>();
-    }
 
     public boolean check() {
         return lobby != null && wait > 0 && wall > 0 && lava > 0 && land.check();
@@ -135,7 +127,7 @@ public class Match {
     }
 
     public void tpToSpawn(Player p) {
-        p.teleport(land.getArea(mapper.get(p)).getSpawn());
+        p.teleport(land.getSpawn(mapper.get(p)));
     }
 
     public void addViewer(Player p) {
@@ -143,7 +135,7 @@ public class Match {
 
         viewer.add(p);
 
-        p.teleport(land.getArea(Rank.NONE).getSpawn());
+        p.teleport(land.getSpawn(Rank.NONE));
         p.setGameMode(GameMode.SPECTATOR);
         p.setHealth(p.getMaxHealth());
     }
@@ -198,16 +190,12 @@ public class Match {
         return running;
     }
 
-    public boolean isRanked(Block b) {
-        return land.isRanked(b.getLocation());
+    public boolean isArea(Block b) {
+        return land.isArea(b.getLocation());
     }
 
-    public boolean isRanked(Player p, Block b) {
-        return mapper.containsKey(p) && land.getArea(mapper.get(p)).contains(b.getLocation());
-    }
-
-    public boolean isRanked(Player p, Location loc) {
-        return mapper.containsKey(p) && land.getArea(mapper.get(p)).contains(loc);
+    public boolean isWall(Block b) {
+        return land.isWall(b.getLocation());
     }
 
     public boolean isTeammate(Entity p, Entity other) {

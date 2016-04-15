@@ -20,12 +20,10 @@ public class Area implements Iterable<Location> {
 
     private Location base;
     private Location offset;
-    private Location spawn;
 
-    public Area(Location base, Location offset, Location spawn) {
+    public Area(Location base, Location offset) {
         this.base = base;
         this.offset = offset;
-        this.spawn = spawn;
     }
 
     public boolean contains(Location loc) {
@@ -36,7 +34,7 @@ public class Area implements Iterable<Location> {
     }
 
     private boolean check(double x, double y) {
-        return (y > 0) ? (x > 0 && x < y) : (x < 0 && x > y);
+        return x == y || ((y > 0) ? (x > 0 && x < y) : (x < 0 && x > y));
     }
 
     public Location getBase() {
@@ -67,7 +65,7 @@ public class Area implements Iterable<Location> {
                 offset.setY(-length);
             }
         }
-        return new Area(base, offset, null);
+        return new Area(base, offset);
     }
 
     public void setBase(Location base) {
@@ -76,14 +74,6 @@ public class Area implements Iterable<Location> {
 
     public void setOffset(Location offset) {
         this.offset = offset;
-    }
-
-    public Location getSpawn() {
-        return spawn;
-    }
-
-    public void setSpawn(Location spawn) {
-        this.spawn = spawn;
     }
 
     @SuppressWarnings("unchecked")
@@ -112,8 +102,7 @@ public class Area implements Iterable<Location> {
     public static Area toArea(World world, Map<String, Map> map) {
         return new Area(
                 toLocation(world, map.get("base")),
-                toLocation(world, map.get("offset")),
-                toLocation(world, map.get("spawn"))
+                toLocation(world, map.get("offset"))
         );
     }
 
@@ -126,9 +115,6 @@ public class Area implements Iterable<Location> {
         Map<String, Object> object = new HashMap<>();
         object.put("base", toMap(base));
         object.put("offset", toMap(offset));
-        if (spawn != null) {
-            object.put("spawn", toMap(spawn));
-        }
         return Main.GSON.toJson(object);
     }
 
@@ -160,7 +146,7 @@ public class Area implements Iterable<Location> {
     }
 
     public static Area of(Location left, Location right) {
-        return new Area(left, right.subtract(left), null);
+        return new Area(left, right.subtract(left));
     }
 
 }

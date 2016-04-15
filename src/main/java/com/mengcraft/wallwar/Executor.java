@@ -163,7 +163,7 @@ public class Executor implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void handle(BlockExplodeEvent event) {
         List<Block> list = new ArrayList<>();
-        forEach(event.blockList(), b -> !match.isRanked(b), b -> {
+        forEach(event.blockList(), b -> !match.isArea(b), b -> {
             list.add(b);
         });
         event.blockList().removeAll(list);
@@ -172,7 +172,7 @@ public class Executor implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void handle(EntityExplodeEvent event) {
         List<Block> list = new ArrayList<>();
-        forEach(event.blockList(), b -> !match.isRanked(b), b -> {
+        forEach(event.blockList(), b -> !match.isArea(b), b -> {
             list.add(b);
         });
         event.blockList().removeAll(list);
@@ -182,7 +182,9 @@ public class Executor implements Listener {
     public void handle(BlockBreakEvent event) {
         if (match.isNotRunning()) {
             event.setCancelled(true);
-        } else if (isNotRanked(event.getPlayer(), event.getBlock())) {
+        } else if (match.getWall() > 0 && match.isWall(event.getBlock())) {
+            event.setCancelled(true);
+        } else if (!match.isArea(event.getBlock())) {
             event.setCancelled(true);
         }
     }
@@ -191,16 +193,11 @@ public class Executor implements Listener {
     public void handle(BlockPlaceEvent event) {
         if (match.isNotRunning()) {
             event.setCancelled(true);
-        } else if (isNotRanked(event.getPlayer(), event.getBlock())) {
+        } else if (match.getWall() > 0 && match.isWall(event.getBlock())) {
+            event.setCancelled(true);
+        } else if (!match.isArea(event.getBlock())) {
             event.setCancelled(true);
         }
-    }
-
-    private boolean isNotRanked(Player p, Block b) {
-        if (match.getWall() != 0) {
-            return !match.isRanked(p, b);
-        }
-        return !match.isRanked(b);
     }
 
     public void setBoard(StatusBoard board) {

@@ -2,15 +2,15 @@ package com.mengcraft.wallwar.level;
 
 import com.mengcraft.wallwar.Main;
 import com.mengcraft.wallwar.Rank;
+import com.mengcraft.wallwar.RankMap;
 import org.bukkit.Location;
 import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
+import static com.mengcraft.wallwar.RankMap.from;
 import static com.mengcraft.wallwar.level.Area.toArea;
 
 /**
@@ -18,7 +18,8 @@ import static com.mengcraft.wallwar.level.Area.toArea;
  */
 public class Land {
 
-    private final Map<Rank, Area> areaMap = new EnumMap<>(Rank.class);
+    private final RankMap<Location> spawn = new RankMap<>();
+    private final List<Area> areaSet = new ArrayList<>();
     private final List<Area> wallSet = new ArrayList<>();
 
     private World level;
@@ -30,18 +31,26 @@ public class Land {
     private int lava;
 
     public boolean check() {
-        return (areaMap.size() == 5 &&
+        return (areaSet.size() != 0 &&
                 wallSet.size() != 0 &&
+                spawn.size() == 5 &&
                 level != null &&
                 minSize > 0 &&
                 maxSize > 0);
     }
 
-    public boolean isRanked(Location loc) {
-        for (Map.Entry<Rank, Area> entry : areaMap.entrySet()) {
-            if (entry.getKey().equals(Rank.NONE)) {
-                ;
-            } else if (entry.getValue().contains(loc)) {
+    public boolean isArea(Location loc) {
+        for (Area area : areaSet) {
+            if (area.contains(loc)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isWall(Location loc) {
+        for (Area area : wallSet) {
+            if (area.contains(loc)) {
                 return true;
             }
         }
@@ -55,10 +64,8 @@ public class Land {
     }
 
     public void bootLava() {
-        areaMap.forEach((rank, area) -> {
-            if (rank != Rank.NONE) {
-                processLava(area);
-            }
+        areaSet.forEach(area -> {
+            processLava(area);
         });
         lava++;
     }
@@ -90,8 +97,8 @@ public class Land {
         this.minSize = minSize;
     }
 
-    public void setArea(int i, Area area) {
-        areaMap.put(Rank.values()[i], area);
+    public void addArea(Area area) {
+        areaSet.add(area);
     }
 
     public int getMaxSize() {
@@ -102,20 +109,21 @@ public class Land {
         this.maxSize = maxSize;
     }
 
-    public Area getArea(int index) {
-        return areaMap.get(Rank.values()[index]);
+    public Location getSpawn(Rank rank) {
+        return spawn.get(rank);
     }
 
-    public Area getArea(Rank rank) {
-        return areaMap.get(rank);
+    public void setSpawn(Rank rank, Location loc) {
+        spawn.put(rank, loc);
     }
 
     public void save() {
         main.getConfig().set("match.land.name", level.getName());
         main.getConfig().set("match.land.wall", toString(wallSet));
-        main.getConfig().set("match.land.area", toString(areaMap.values()));
+        main.getConfig().set("match.land.area", toString(areaSet));
         main.getConfig().set("match.size.min", minSize);
         main.getConfig().set("match.size.max", maxSize);
+        main.getConfig().set("match.size.spawn", spawn.toMap());
     }
 
     public void load() {
@@ -124,8 +132,11 @@ public class Land {
             wallSet.add(toArea(level, line));
         }
         for (String line : main.getConfig().getStringList("match.land.area")) {
-            areaMap.put(Rank.getRank(areaMap.size()), toArea(level, line));
+            areaSet.add(toArea(level, line));
         }
+        spawn.putAll(from(main.getConfig().
+                getConfigurationSection("match.size.spawn").getValues(false)
+        ));
         setMinSize(main.getConfig().getInt("match.size.min"));
         setMaxSize(main.getConfig().getInt("match.size.max"));
     }
@@ -148,14 +159,12 @@ public class Land {
 
     @Override
     public String toString() {
-        return ("Land{" +
-                "areaMap=" + areaMap +
-                ", wallSet=" + wallSet +
-                ", level=" + level +
-                ", minSize=" + minSize +
-                ", maxSize=" + maxSize +
-                ", lavaHigh=" + lava +
-                '}');
+        return ("areaSet=" + areaSet + ',' +
+                "wallSet=" + wallSet + ',' +
+                "minSize=" + minSize + ',' +
+                "maxSize=" + maxSize + ',' +
+                "level=" + level + ',' +
+                "lavaLen=" + lava);
     }
 
 }
