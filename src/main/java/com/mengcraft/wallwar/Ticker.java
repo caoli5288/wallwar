@@ -62,6 +62,9 @@ public class Ticker implements Runnable {
             match.addMember(p, roller.next());
             p.setGameMode(GameMode.SURVIVAL);
             p.setFlying(false);
+            p.getActivePotionEffects().forEach(effect -> {
+                p.removePotionEffect(effect.getType());
+            });
             match.tpToSpawn(p);
         });
         match.getWaiter().clear();

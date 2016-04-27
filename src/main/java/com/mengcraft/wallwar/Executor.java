@@ -136,6 +136,7 @@ public class Executor implements Listener {
         p.sendMessage(ChatColor.YELLOW + "你进入观战模式");
     }
 
+    @EventHandler
     public void handle(FoodLevelChangeEvent event) {
         if (match.isNotRunning()) {
             event.setCancelled(true);
