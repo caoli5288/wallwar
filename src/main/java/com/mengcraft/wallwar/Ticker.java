@@ -60,12 +60,12 @@ public class Ticker implements Runnable {
         RankRoller roller = new RankRoller();
         match.getWaiter().forEach(p -> {
             match.addMember(p, roller.next());
-            match.tpToSpawn(p);
             p.setGameMode(GameMode.SURVIVAL);
             p.setFlying(false);
+            match.tpToSpawn(p);
         });
-        match.setRunning(true);
         match.getWaiter().clear();
+        match.setRunning(true);
     }
 
     private void endOfMatch() {

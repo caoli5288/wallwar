@@ -16,6 +16,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -133,6 +134,12 @@ public class Executor implements Listener {
 
         p.sendMessage(ChatColor.BLUE + "你在游戏中死亡");
         p.sendMessage(ChatColor.YELLOW + "你进入观战模式");
+    }
+
+    public void handle(FoodLevelChangeEvent event) {
+        if (match.isNotRunning()) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
