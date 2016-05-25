@@ -2,95 +2,80 @@ package com.mengcraft.wallwar.entity;
 
 import com.mengcraft.wallwar.Match;
 import com.mengcraft.wallwar.Rank;
-import me.tigerhix.lib.scoreboard.common.EntryBuilder;
-import me.tigerhix.lib.scoreboard.common.animate.HighlightedString;
-import me.tigerhix.lib.scoreboard.type.Entry;
-import me.tigerhix.lib.scoreboard.type.ScoreboardHandler;
+import com.mengcraft.wallwar.scoreboard.FixedBodyHandler;
+import com.mengcraft.wallwar.scoreboard.LightedLine;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 /**
  * Created on 16-3-9.
  */
-public class StatusBoard implements ScoreboardHandler {
+public class StatusBoard extends FixedBodyHandler {
 
     private final Match match;
-    private final HighlightedString tail;
+    private final LightedLine tail;
+    private final Player p;
 
-    public StatusBoard(Match match) {
+    public StatusBoard(Match match, Player p) {
+        this.p = p;
         this.match = match;
-        this.tail = new HighlightedString(match.getMessage("scoreboard.tail"), "&6", "&e");
+        this.tail = LightedLine.of(match.getMessage("scoreboard.tail"), ChatColor.GOLD);
     }
 
     @Override
-    public String getTitle(Player p) {
-        return String.format(match.getMessage("scoreboard.title"), p.getName());
-    }
-
-    @Override
-    public List<Entry> getEntries(Player p) {
+    public void update() {
         if (match.isRunning()) {
             if (match.isEnd()) {
-                return createEndEntry();
+                createEndEntry();
             } else {
-                return createRunningEntry(match.getRank(p));
+                createRunningEntry(match.getRank(p));
             }
         } else {
-            return createWaitEntry(match.getUser(p));
+            createWaitEntry(match.getUser(p));
         }
     }
 
-    private List<Entry> createRunningEntry(Rank rank) {
-        EntryBuilder builder = new EntryBuilder();
-        builder.next("");
-        builder.next("&6你的队伍: " + (rank != Rank.NONE ? rank.getColour() + rank.getTag() + '队' : "观众"));
-        builder.next("");
-        builder.next("&6地图: " + match.getMessage("scoreboard.match"));
-        builder.next("&6存活: " + match.getMapper().size());
-        builder.next("&6观战: " + match.getViewer().size());
-        builder.next("&c红队: " + Rank.RED.getNumber());
-        builder.next("&e黄队: " + Rank.YELLOW.getNumber());
-        builder.next("&b蓝队: " + Rank.BLUE.getNumber());
-        builder.next("&a绿队: " + Rank.GREEN.getNumber());
-        builder.next("");
-        builder.next("&6战墙倒塌: " + match.getWall());
-        builder.next("&6岩浆高度: " + match.getLand().getLava());
-        builder.next("");
-        builder.next(tail.next());
-
-        return builder.build();
+    private void createRunningEntry(Rank rank) {
+        append("§r");
+        append("§6你的队伍: " + (rank != Rank.NONE ? rank.getColour() + rank.getTag() + '队' : "观众"));
+        append("§r§r");
+        append("§6地图: " + match.getMessage("scoreboard.match"));
+        append("§6存活: " + match.getMapper().size());
+        append("§6观战: " + match.getViewer().size());
+        append("§c红队: " + Rank.RED.getNumber());
+        append("§e黄队: " + Rank.YELLOW.getNumber());
+        append("§b蓝队: " + Rank.BLUE.getNumber());
+        append("§a绿队: " + Rank.GREEN.getNumber());
+        append("§r§r");
+        append("§6战墙倒塌: " + match.getWall());
+        append("§6岩浆高度: " + match.getLand().getLava());
+        append("§r§r§r");
+        append(tail.getText());
     }
 
-    private List<Entry> createEndEntry() {
-        EntryBuilder builder = new EntryBuilder();
-        builder.next("");
-        builder.next("&7========");
-        builder.blank();
-        builder.next("&3获胜队伍: " + match.getRank().getColour() + match.getRank().getTag() + '队');
-        builder.next("");
-        builder.next("&7========");
-        builder.next("");
-        builder.next(tail.next());
-
-        return builder.build();
+    private void createEndEntry() {
+        append("§r");
+        append("§7========");
+        append("§r§r");
+        append("§3获胜队伍: " + match.getRank().getColour() + match.getRank().getTag() + '队');
+        append("§r§r§r");
+        append("§7========");
+        append("§r§r§r§r");
+        append(tail.getText());
     }
 
-    private List<Entry> createWaitEntry(WallUser user) {
-        EntryBuilder builder = new EntryBuilder();
-        builder.next("");
-        builder.next("&e场次: " + (user != null ? user.getJoining() : 0));
-        builder.next("&e胜场: " + (user != null ? user.getWinning() : 0));
-        builder.next("&e击杀: " + (user != null ? user.getKilled() : 0));
-        builder.next("&e死亡: " + (user != null ? user.getDead() : 0));
-        builder.next("");
-        builder.next("&6地图: " + match.getMessage("scoreboard.match"));
-        builder.next("&e玩家: " + match.getWaiter().size());
-        builder.next("&6状态: " + (match.getWaiter().size() < match.getLand().getMinSize() ? "&6等待排队" : "&c即将开始"));
-        builder.next("");
-        builder.next(tail.next());
-
-        return builder.build();
+    private void createWaitEntry(WallUser user) {
+        append("§r");
+        append("§e场次: " + (user != null ? user.getJoining() : 0));
+        append("§e胜场: " + (user != null ? user.getWinning() : 0));
+        append("§e击杀: " + (user != null ? user.getKilled() : 0));
+        append("§e死亡: " + (user != null ? user.getDead() : 0));
+        append("§r§r");
+        append("§6地图: " + match.getMessage("scoreboard.match"));
+        append("§e玩家: " + match.getWaiter().size());
+        append("§6状态: " + (match.getWaiter().size() < match.getLand().getMinSize() ? "§6等待排队" : "§c即将开始"));
+        append("§r§r§r");
+        append(tail.getText());
     }
 
 }

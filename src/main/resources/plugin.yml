@@ -1,6 +1,6 @@
 name: WallWar
 main: com.mengcraft.wallwar.Main
-version: 1.0
+version: ${project.version}
 author: mengcraft
 
 commands:
@@ -15,6 +15,5 @@ permissions:
 
 depend:
 - WorldEdit
-- ScoreboardLib
-- NametagEdit
 - MapRestore
+- iTag

@@ -19,7 +19,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.mengcraft.wallwar.util.CollectionUtil.forEach;
-import static com.nametagedit.plugin.NametagEdit.getApi;
 
 /**
  * Created on 16-2-25.
@@ -116,8 +115,6 @@ public class Match {
 
         p.getInventory().clear();
 
-        getApi().setPrefix(p, rank.getColour().toString());
-
         mapper.put(p, rank);
         map.put(rank, p);
 
@@ -131,8 +128,6 @@ public class Match {
     }
 
     public void addViewer(Player p) {
-        getApi().setPrefix(p, Rank.NONE.getColour().toString());
-
         viewer.add(p);
 
         p.teleport(land.getSpawn(Rank.NONE));

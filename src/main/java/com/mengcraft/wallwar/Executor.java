@@ -2,8 +2,9 @@ package com.mengcraft.wallwar;
 
 import com.mengcraft.wallwar.entity.StatusBoard;
 import com.mengcraft.wallwar.entity.WallUser;
-import me.tigerhix.lib.scoreboard.ScoreboardLib;
-import me.tigerhix.lib.scoreboard.type.Scoreboard;
+import com.mengcraft.wallwar.scoreboard.FixedBody;
+import com.mengcraft.wallwar.scoreboard.SidebarBoard;
+import com.mengcraft.wallwar.scoreboard.TextLine;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -24,6 +25,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
+import org.kitteh.tag.AsyncPlayerReceiveNameTagEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +38,18 @@ import static com.mengcraft.wallwar.util.CollectionUtil.forEach;
  */
 public class Executor implements Listener {
 
-    private StatusBoard board;
     private Match match;
     private Main main;
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void handle(AsyncPlayerReceiveNameTagEvent event) {
+        if (match.isRunning()) {
+            Rank rank = match.getRank(event.getNamedPlayer());
+            if (rank != Rank.NONE) {
+                event.setTag(rank.getColour() + ChatColor.stripColor(event.getTag()));
+            }
+        }
+    }
 
     @EventHandler
     public void handle(AsyncPlayerChatEvent event) {
@@ -109,10 +120,11 @@ public class Executor implements Listener {
                 main.createUser(p);
             }
         });
-        Scoreboard scoreboard = ScoreboardLib.createScoreboard(p);
-        scoreboard.setHandler(board)
-                .setUpdateInterval(10);
-        scoreboard.activate();
+        SidebarBoard board = SidebarBoard.of(main);
+        board.setHead(TextLine.of(String.format(match.getMessage("scoreboard.title"), p.getName())));
+        board.setBody(FixedBody.of(new StatusBoard(match, p)));
+        board.update(p);
+        board.update(p::isOnline, 10);
     }
 
     @EventHandler
@@ -206,10 +218,6 @@ public class Executor implements Listener {
         } else if (!match.isArea(event.getBlock())) {
             event.setCancelled(true);
         }
-    }
-
-    public void setBoard(StatusBoard board) {
-        this.board = board;
     }
 
     public void setMatch(Match match) {
