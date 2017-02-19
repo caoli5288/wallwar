@@ -76,10 +76,7 @@ public class Commander implements CommandExecutor {
         if (sub.equals("set-save")) {
             return setSave(p);
         }
-        if (sub.equals("get-title")) {
-            return getTitle(p, it);
-        }
-        return false;
+        return sub.equals("get-title") && getTitle(p, it);
     }
 
     private boolean getTitle(Player p, Iterator<String> it) {

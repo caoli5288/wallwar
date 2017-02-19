@@ -7,13 +7,13 @@ import java.util.Map;
 /**
  * Created on 16-4-14.
  */
-public class RankMap<T> extends EnumMap<Rank, T> {
+public class Ranked<T> extends EnumMap<Rank, T> {
 
-    public RankMap() {
+    public Ranked() {
         super(Rank.class);
     }
 
-    public Map<String, T> toMap() {
+    public Map<String, T> map() {
         Map<String, T> map = new HashMap<>();
         forEach((k, v) -> {
             map.put(k.name(), v);
@@ -22,8 +22,8 @@ public class RankMap<T> extends EnumMap<Rank, T> {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> RankMap<T> from(Map<String, Object> in) {
-        RankMap<T> map = new RankMap<>();
+    public static <T> Ranked<T> of(Map<String, Object> in) {
+        Ranked<T> map = new Ranked<>();
         in.forEach((k, v) -> {
             map.put(Rank.valueOf(k.toUpperCase()), (T) v);
         });

@@ -1,8 +1,8 @@
 package com.mengcraft.wallwar;
 
 import com.google.gson.Gson;
-import com.mengcraft.wallwar.db.EbeanHandler;
-import com.mengcraft.wallwar.db.EbeanManager;
+import com.mengcraft.simpleorm.EbeanHandler;
+import com.mengcraft.simpleorm.EbeanManager;
 import com.mengcraft.wallwar.entity.WallUser;
 import com.mengcraft.wallwar.level.Land;
 import com.mengcraft.wallwar.util.Action;

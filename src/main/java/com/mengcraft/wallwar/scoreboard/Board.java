@@ -4,6 +4,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scoreboard.Scoreboard;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
 /**
  * Created on 16-5-16.
  */
@@ -18,7 +22,7 @@ public abstract class Board {
         this.plugin = plugin;
     }
 
-    public <T> void update(Condition condition, int interval) {
+    public <T> void update(Supplier<Boolean> condition, int interval) {
         if (taskId == 0) {
             taskId = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
                 if (condition.get()) {

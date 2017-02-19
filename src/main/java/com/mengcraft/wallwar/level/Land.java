@@ -2,7 +2,7 @@ package com.mengcraft.wallwar.level;
 
 import com.mengcraft.wallwar.Main;
 import com.mengcraft.wallwar.Rank;
-import com.mengcraft.wallwar.RankMap;
+import com.mengcraft.wallwar.Ranked;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.mengcraft.wallwar.RankMap.from;
+import static com.mengcraft.wallwar.Ranked.of;
 import static com.mengcraft.wallwar.level.Area.toArea;
 
 /**
@@ -18,7 +18,7 @@ import static com.mengcraft.wallwar.level.Area.toArea;
  */
 public class Land {
 
-    private final RankMap<Location> spawn = new RankMap<>();
+    private final Ranked<Location> spawn = new Ranked<>();
     private final List<Area> areaSet = new ArrayList<>();
     private final List<Area> wallSet = new ArrayList<>();
 
@@ -123,7 +123,7 @@ public class Land {
         main.getConfig().set("match.land.area", toString(areaSet));
         main.getConfig().set("match.size.min", minSize);
         main.getConfig().set("match.size.max", maxSize);
-        main.getConfig().set("match.size.spawn", spawn.toMap());
+        main.getConfig().set("match.size.spawn", spawn.map());
     }
 
     public void load() {
@@ -134,7 +134,7 @@ public class Land {
         for (String line : main.getConfig().getStringList("match.land.area")) {
             areaSet.add(toArea(level, line));
         }
-        spawn.putAll(from(main.getConfig().
+        spawn.putAll(of(main.getConfig().
                 getConfigurationSection("match.size.spawn").getValues(false)
         ));
         setMinSize(main.getConfig().getInt("match.size.min"));
@@ -159,12 +159,14 @@ public class Land {
 
     @Override
     public String toString() {
-        return ("areaSet=" + areaSet + ',' +
+        return ("Land (" +
+                "areaSet=" + areaSet + ',' +
                 "wallSet=" + wallSet + ',' +
                 "minSize=" + minSize + ',' +
                 "maxSize=" + maxSize + ',' +
                 "level=" + level + ',' +
-                "lavaLen=" + lava);
+                "lavaLen=" + lava +
+                ")");
     }
 
 }

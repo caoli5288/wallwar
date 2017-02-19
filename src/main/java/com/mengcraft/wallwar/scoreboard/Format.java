@@ -2,7 +2,8 @@ package com.mengcraft.wallwar.scoreboard;
 
 import org.bukkit.ChatColor;
 
-import static com.mengcraft.wallwar.scoreboard.Main.eq;
+import java.util.Objects;
+
 import static org.bukkit.ChatColor.RESET;
 
 /**
@@ -35,7 +36,7 @@ public class Format {
     }
 
     public void set(ChatColor in) {
-        if (eq(in, RESET)) {
+        if (Objects.equals(in, RESET)) {
             format = null;
             color = null;
         } else if (in.isFormat()) {

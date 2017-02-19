@@ -17,3 +17,4 @@ depend:
 - WorldEdit
 - MapRestore
 - iTag
+- SimpleORM

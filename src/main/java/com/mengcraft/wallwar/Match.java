@@ -277,7 +277,7 @@ public class Match {
 
     @Override
     public String toString() {
-        return ("Match{" +
+        return ("Match (" +
                 "mapper=" + mapper +
                 ", lobby=" + lobby +
                 ", waiter=" + waiter +
@@ -286,7 +286,7 @@ public class Match {
                 ", wait=" + wait +
                 ", wall=" + wall +
                 ", lava=" + lava +
-                '}');
+                ')');
     }
 
     public boolean isNotRunning() {

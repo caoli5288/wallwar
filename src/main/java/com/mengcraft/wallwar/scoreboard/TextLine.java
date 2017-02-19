@@ -1,7 +1,5 @@
 package com.mengcraft.wallwar.scoreboard;
 
-import org.bukkit.ChatColor;
-
 /**
  * Created on 16-5-16.
  */

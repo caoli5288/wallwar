@@ -36,10 +36,7 @@ public class MultiMap<K, V> {
 
     public boolean remove(K key, V value) {
         List<V> list = map.get(key);
-        if (list != null) {
-            return list.remove(value);
-        }
-        return false;
+        return list == null ? false : list.remove(value);
     }
 
     public boolean has(K key) {

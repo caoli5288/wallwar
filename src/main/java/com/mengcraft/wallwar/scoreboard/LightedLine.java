@@ -5,7 +5,6 @@ import org.bukkit.ChatColor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mengcraft.wallwar.scoreboard.Main.eq;
 import static org.bukkit.ChatColor.getByChar;
 
 /**
@@ -24,10 +23,10 @@ public class LightedLine extends ListedLine {
         ChatColor k;
         for (char i = 0, j; i < in.length(); ) {
             j = in.charAt(i);
-            if (eq(j, '§')) {
+            if (j == '§') {
                 i++;
                 k = getByChar(in.charAt(i++));
-                if (eq(k, null)) {
+                if (k == null) {
                     throw new NullPointerException();
                 }
                 format.set(k);
