@@ -49,10 +49,7 @@ public class Main extends JavaPlugin {
             executor.setMatch(match);
             executor.setMain(this);
 
-            Ticker ticker = new Ticker();
-            ticker.setMain(this);
-            ticker.setMatch(match);
-            ticker.setWait(match.getWait());
+            Ticker ticker = new Ticker(this, match);
             ticker.setWaitExit(15);
             ticker.setAction(action);
             ticker.setTitle(title);

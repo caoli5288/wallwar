@@ -4,6 +4,7 @@ import com.mengcraft.wallwar.entity.RankRoller;
 import com.mengcraft.wallwar.util.Action;
 import com.mengcraft.wallwar.util.Title;
 import com.mengcraft.wallwar.util.TitleManager;
+import lombok.val;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 
@@ -12,8 +13,8 @@ import org.bukkit.GameMode;
  */
 public class Ticker implements Runnable {
 
-    private Match match;
-    private Main main;
+    private final Match match;
+    private final Main main;
 
     private int wait;
     private int waitExit;
@@ -21,11 +22,18 @@ public class Ticker implements Runnable {
     private Action action;
     private TitleManager title;
 
+    public Ticker(Main main, Match match) {
+        this.match = match;
+        this.main = main;
+        wait = match.getWait();
+        lava = match.getLava();
+    }
+
     @Override
     public void run() {
         if (match.isRunning()) {
             if (match.isEnd()) {
-                processEndOf();
+                processEnd();
             } else {
                 process();
             }
@@ -57,33 +65,34 @@ public class Ticker implements Runnable {
     }
 
     private void startMatch() {
-        RankRoller roller = new RankRoller();
-        match.getWaiter().forEach(p -> {
-            match.addMember(p, roller.next());
-            p.setGameMode(GameMode.SURVIVAL);
-            p.setFlying(false);
-            p.getActivePotionEffects().forEach(effect -> {
-                p.removePotionEffect(effect.getType());
-            });
-            match.tpToSpawn(p);
-        });
-        match.getWaiter().clear();
-        match.setRunning(true);
+        if (match.setRunning(true)) {// 暂且的修复方案
+            val roller = new RankRoller();
+            for (val p : match.getWaiter()) {
+                match.addMember(p, roller.next());
+                p.setGameMode(GameMode.SURVIVAL);
+                p.setFlying(false);
+                p.getActivePotionEffects().forEach(effect -> {
+                    p.removePotionEffect(effect.getType());
+                });
+                match.tpToSpawn(p);
+            }
+            match.getWaiter().clear();
+        }
     }
 
-    private void endOfMatch() {
+    private void end() {
         main.getServer().getOnlinePlayers().forEach(p -> {
             main.tpToLobby(p);
         });
         main.getServer().getScheduler().runTaskLater(main, () -> {
             main.getServer().shutdown();
-        }, 10);
+        }, 25);
     }
 
     private void process() {
         if (match.getWall() > 0) {
             match.setWall(match.getWall() - 1);
-            if (match.getWall() == 0) {
+            if (match.getWall() < 1) {
                 match.getLand().boomWall();
                 match.getMapper().keySet().forEach(p -> {
                     p.resetTitle();
@@ -92,7 +101,7 @@ public class Ticker implements Runnable {
             }
         } else if (lava > 0) {
             lava--;
-            if (lava == 0) {
+            if (lava < 1) {
                 match.getLand().bootLava();
             }
         } else {
@@ -104,16 +113,6 @@ public class Ticker implements Runnable {
         this.lava = lava;
     }
 
-    public void setMatch(Match match) {
-        this.match = match;
-        this.wait = match.getWait();
-        this.lava = match.getLava();
-    }
-
-    public void setMain(Main main) {
-        this.main = main;
-    }
-
     private void processStart() {
         wait--;
         Title t = new Title(
@@ -122,7 +121,7 @@ public class Ticker implements Runnable {
                 0, 50, 10
         );
         match.getWaiter().forEach(p -> title.setTitle(p, t));
-        if (wait == 0) {
+        if (wait < 1) {// 虽然不知道为什么但是有时候迷一样会小于0
             startMatch();
         }
     }
@@ -131,10 +130,10 @@ public class Ticker implements Runnable {
         this.waitExit = waitExit;
     }
 
-    private void processEndOf() {
+    private void processEnd() {
         waitExit--;
-        if (waitExit == 0) {
-            endOfMatch();
+        if (waitExit < 1) {
+            end();
         }
     }
 

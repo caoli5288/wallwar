@@ -229,8 +229,10 @@ public class Match {
         return mapper;
     }
 
-    public void setRunning(boolean running) {
+    public synchronized boolean setRunning(boolean running) {
+        if (this.running == running) return false;
         this.running = running;
+        return true;
     }
 
     public boolean isEnd() {
