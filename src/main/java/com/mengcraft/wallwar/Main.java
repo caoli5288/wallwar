@@ -19,6 +19,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
+import static java.util.concurrent.CompletableFuture.runAsync;
+
 /**
  * Created on 16-2-23.
  */
@@ -100,11 +102,11 @@ public class Main extends JavaPlugin {
         });
     }
 
-    public void saveBean(Player p) {
+    public void save(Player p) {
         WallUser removed = userMap.remove(p.getUniqueId());
-        if (removed != null) getServer().getScheduler().runTaskAsynchronously(this, () -> {
-            getDatabase().save(removed);
-        });
+        if (removed != null) {
+            runAsync(() -> getDatabase().save(removed));
+        }
     }
 
     public void tpToLobby(Player p) {
@@ -125,7 +127,7 @@ public class Main extends JavaPlugin {
     }
 
     public void runTask(Runnable runnable) {
-        getServer().getScheduler().runTaskAsynchronously(this, runnable);
+        runAsync(runnable);
     }
 
     public void createUser(Player p) {

@@ -133,8 +133,8 @@ public class Executor implements Listener {
         if (match.isRunning()) {
             match.addViewer(p);
         }
-        match.clearUp(p);
-        match.checkUp();
+        match.cleanUp(p);
+        match.checkEnd();
 
         match.getUser(p).addDead();
         if (p.getKiller() != null) {
@@ -161,9 +161,9 @@ public class Executor implements Listener {
         if (p.getLocation().getWorld() != match.getLobby().getWorld()) {
             p.teleport(match.getLobby());
         }
-        main.saveBean(p);
-        match.clearUp(p);
-        match.checkUp();
+        main.save(p);
+        match.cleanUp(p);
+        match.checkEnd();
     }
 
     @EventHandler
@@ -182,27 +182,23 @@ public class Executor implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void handle(BlockExplodeEvent event) {
-        List<Block> list = new ArrayList<>();
-        forEach(event.blockList(), b -> !match.isArea(b), b -> {
-            list.add(b);
-        });
-        event.blockList().removeAll(list);
+        List<Block> l = new ArrayList<>();
+        forEach(event.blockList(), b -> match.isWall(b) || !match.isArea(b), l::add);
+        event.blockList().removeAll(l);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void handle(EntityExplodeEvent event) {
-        List<Block> list = new ArrayList<>();
-        forEach(event.blockList(), b -> !match.isArea(b), b -> {
-            list.add(b);
-        });
-        event.blockList().removeAll(list);
+        List<Block> l = new ArrayList<>();
+        forEach(event.blockList(), b -> match.isWall(b) || !match.isArea(b), l::add);
+        event.blockList().removeAll(l);
     }
 
     @EventHandler
     public void handle(BlockBreakEvent event) {
         if (match.isNotRunning()) {
             event.setCancelled(true);
-        } else if (match.getWall() > 0 && match.isWall(event.getBlock())) {
+        } else if (match.isWall(event.getBlock())) {
             event.setCancelled(true);
         } else if (!match.isArea(event.getBlock())) {
             event.setCancelled(true);
@@ -213,7 +209,7 @@ public class Executor implements Listener {
     public void handle(BlockPlaceEvent event) {
         if (match.isNotRunning()) {
             event.setCancelled(true);
-        } else if (match.getWall() > 0 && match.isWall(event.getBlock())) {
+        } else if (match.isWall(event.getBlock())) {
             event.setCancelled(true);
         } else if (!match.isArea(event.getBlock())) {
             event.setCancelled(true);

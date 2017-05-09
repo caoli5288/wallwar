@@ -46,13 +46,13 @@ public class Match {
         return lobby != null && wait > 0 && wall > 0 && lava > 0 && land.check();
     }
 
-    public void checkUp() {
+    public void checkEnd() {
         if (running && !end) {
-            checkUp(new HashSet<>(mapper.values()));
+            checkEnd(new HashSet<>(mapper.values()));
         }
     }
 
-    private void checkUp(HashSet<Rank> set) {
+    private void checkEnd(HashSet<Rank> set) {
         if (set.size() < 2) {
             set.forEach(rank -> {
                 setRank(rank);
@@ -96,7 +96,7 @@ public class Match {
         });
     }
 
-    public void clearUp(Player p) {
+    public void cleanUp(Player p) {
         if (mapper.containsKey(p)) {
             mapper.remove(p).addNumber(-1);
         } else if (viewer.contains(p)) {
@@ -190,7 +190,7 @@ public class Match {
     }
 
     public boolean isWall(Block b) {
-        return land.isWall(b.getLocation());
+        return wall > 0 && land.isWall(b.getLocation());
     }
 
     public boolean isTeammate(Entity p, Entity other) {
