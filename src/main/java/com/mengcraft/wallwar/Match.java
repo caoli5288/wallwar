@@ -1,8 +1,9 @@
 package com.mengcraft.wallwar;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.mengcraft.wallwar.entity.WallUser;
 import com.mengcraft.wallwar.level.Land;
-import com.mengcraft.wallwar.util.MultiMap;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -11,9 +12,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +24,7 @@ import static com.mengcraft.wallwar.util.ListHelper.forEach;
  */
 public class Match {
 
-    private final MultiMap<Rank, Player> map = new MultiMap<>(new EnumMap<>(Rank.class));
+    private final Multimap<Rank, Player> map = HashMultimap.create();
     private final Map<Player, Rank> mapper = new ConcurrentHashMap<>();
     private final Set<Player> waiter = new HashSet<>();
     private final Set<Player> viewer = new HashSet<>();
@@ -63,7 +62,7 @@ public class Match {
     }
 
     private void processEnd() {
-        map.getMap().forEach((r, list) -> {
+        map.asMap().forEach((r, list) -> {
             if (r.equals(rank)) {
                 processWin(list);
             } else {
@@ -72,7 +71,7 @@ public class Match {
         });
     }
 
-    private void processFail(List<Player> list) {
+    private void processFail(Collection<Player> list) {
         forEach(list, p -> p.isOnline(), p -> {
             p.setGameMode(GameMode.SPECTATOR);
             p.resetTitle();
@@ -83,7 +82,7 @@ public class Match {
         });
     }
 
-    private void processWin(List<Player> list) {
+    private void processWin(Collection<Player> list) {
         forEach(list, p -> p.isOnline(), p -> {
             p.setGameMode(GameMode.SPECTATOR);
             p.resetTitle();

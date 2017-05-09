@@ -170,10 +170,10 @@ public class Executor implements Listener {
         match.checkEnd();
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void handle(EntityDamageEvent event) {
         if (match.isNotRunning()) {
-            event.setDamage(0);
+            event.setCancelled(true);
         }
     }
 
