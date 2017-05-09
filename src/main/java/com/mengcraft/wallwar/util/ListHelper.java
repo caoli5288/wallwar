@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 /**
  * Created on 16-3-9.
  */
-public final class CollectionUtil {
+public final class ListHelper {
 
     public static <T> void forEach(Collection<T> i, Predicate<T> p, Consumer<T> c) {
         i.forEach(t -> {
@@ -24,6 +24,13 @@ public final class CollectionUtil {
                 c.accept(t);
             }
         });
+    }
+
+    public static <T> boolean any(Collection<T> input, Predicate<T> p) {
+        for (T i : input) {
+            if (p.test(i)) return true;
+        }
+        return false;
     }
 
 }

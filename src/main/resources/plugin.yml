@@ -15,6 +15,5 @@ permissions:
 
 depend:
 - WorldEdit
-- MapRestore
 - iTag
 - SimpleORM

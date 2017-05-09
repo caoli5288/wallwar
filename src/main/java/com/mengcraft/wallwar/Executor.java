@@ -5,6 +5,8 @@ import com.mengcraft.wallwar.entity.WallUser;
 import com.mengcraft.wallwar.scoreboard.FixedBody;
 import com.mengcraft.wallwar.scoreboard.SidebarBoard;
 import com.mengcraft.wallwar.scoreboard.TextLine;
+import com.mengcraft.wallwar.util.ListHelper;
+import lombok.val;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -13,6 +15,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -31,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.mengcraft.wallwar.util.CollectionUtil.forEach;
+import static com.mengcraft.wallwar.util.ListHelper.forEach;
 
 /**
  * Created on 16-2-25.
@@ -213,6 +217,26 @@ public class Executor implements Listener {
             event.setCancelled(true);
         } else if (!match.isArea(event.getBlock())) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void handle(BlockPistonExtendEvent event) {
+        if (match.isNotRunning()) {
+            val list = event.getBlocks();
+            if (ListHelper.any(list, b -> match.isWall(b) || !match.isArea(b))) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void handle(BlockPistonRetractEvent event) {
+        if (match.isNotRunning()) {
+            val list = event.getBlocks();
+            if (ListHelper.any(list, b -> match.isWall(b) || !match.isArea(b))) {
+                event.setCancelled(true);
+            }
         }
     }
 

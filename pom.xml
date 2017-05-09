@@ -51,12 +51,6 @@
         </dependency>
         <dependency>
             <groupId>com.mengcraft</groupId>
-            <artifactId>maprestore</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.mengcraft</groupId>
             <artifactId>simpleorm</artifactId>
             <version>0.3.3</version>
             <scope>provided</scope>

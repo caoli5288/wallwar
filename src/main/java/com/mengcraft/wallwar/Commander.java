@@ -1,6 +1,5 @@
 package com.mengcraft.wallwar;
 
-import com.mengcraft.maprestore.MapRestore;
 import com.mengcraft.wallwar.util.Action;
 import com.mengcraft.wallwar.util.Title;
 import com.mengcraft.wallwar.util.TitleManager;
@@ -27,7 +26,6 @@ import static org.bukkit.ChatColor.translateAlternateColorCodes;
 public class Commander implements CommandExecutor {
 
     private final WorldEditPlugin we = JavaPlugin.getPlugin(WorldEditPlugin.class);
-    private final MapRestore restore = JavaPlugin.getPlugin(MapRestore.class);
 
     private Match match;
     private Main main;
@@ -105,10 +103,10 @@ public class Commander implements CommandExecutor {
     private boolean setSave(Player p) {
         boolean b = match.check();
         if (b) {
-            restore.addMap(match.getLand().getLevel());
             match.save();
             match.getLand().save();
             main.saveConfig();
+            p.sendMessage("配置文件已保存，自动恢复地图功能已取消请手动做地图恢复");
         } else {
             p.sendMessage("§4Command error! Not configured yet.");
         }
@@ -121,11 +119,7 @@ public class Commander implements CommandExecutor {
             Rank rank = Rank.getRank(parseInt(it.next()));
             if (rank != null) {
                 Location loc = p.getLocation();
-                if (match.getLand().isArea(loc)) {
-                    match.getLand().setSpawn(rank, loc);
-                } else {
-                    p.sendMessage("§4Command error! Not contains in area.");
-                }
+                match.getLand().setSpawn(rank, loc);
             } else {
                 p.sendMessage("§4Command error! Area not found.");
             }

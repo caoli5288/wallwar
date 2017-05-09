@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.mengcraft.wallwar.util.CollectionUtil.forEach;
+import static com.mengcraft.wallwar.util.ListHelper.forEach;
 
 /**
  * Created on 16-2-25.
