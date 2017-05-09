@@ -29,9 +29,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getConfig().options().copyDefaults(true);
-        saveConfig();
-
+        saveDefaultConfig();
         if (getConfig().getConfigurationSection("match") != null) {
             Action action = Action.createAction(getServer());
             TitleManager title = TitleManager.createManager(this);

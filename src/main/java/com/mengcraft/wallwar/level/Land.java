@@ -4,6 +4,7 @@ import com.mengcraft.wallwar.Main;
 import com.mengcraft.wallwar.Rank;
 import com.mengcraft.wallwar.Ranked;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 
 import java.util.ArrayList;
@@ -58,9 +59,17 @@ public class Land {
     }
 
     public void boomWall() {
-        wallSet.forEach(area -> {
-            new WallBoomer(area).runTaskTimer(main, 0, 1);
-        });
+        if (main.getConfig().getBoolean("global.wall.boom")) {
+            wallSet.forEach(area -> {
+                new WallBoomer(area).runTaskTimer(main, 0, 1);
+            });
+        } else {
+            for (Area wall : wallSet) {
+                for (Location l : wall) {
+                    l.getBlock().setType(Material.AIR);
+                }
+            }
+        }
     }
 
     public void bootLava() {

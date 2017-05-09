@@ -1,4 +1,6 @@
 lobby: "lobby"
+wall:
+  boom: true
 message:
   scoreboard:
     match: "&6Sample match"
