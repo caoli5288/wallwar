@@ -137,6 +137,9 @@ public class Main extends JavaPlugin {
         userMap.put(p.getUniqueId(), user);
     }
 
-    public static final Gson GSON = new Gson();
+    public static boolean nil(Object any) {
+        return any == null;
+    }
 
+    public static final Gson GSON = new Gson();
 }

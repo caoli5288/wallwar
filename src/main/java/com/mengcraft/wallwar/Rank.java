@@ -1,10 +1,17 @@
 package com.mengcraft.wallwar;
 
+import com.mengcraft.wallwar.entity.RankRoller;
+import lombok.Getter;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created on 16-2-25.
  */
+@Getter
 public enum Rank {
 
     NONE(ChatColor.WHITE, "观"),
@@ -13,34 +20,30 @@ public enum Rank {
     RED(ChatColor.RED, "红"),
     YELLOW(ChatColor.YELLOW, "黄");
 
+    private final Set<Player> list;
     private final ChatColor colour;
     private final String tag;
-
-    private int number;
+    private Set<Player> living;
 
     Rank(ChatColor colour, String tag) {
         this.colour = colour;
         this.tag = tag;
+        list = new HashSet<>();
+        living = list;
     }
 
-    public int getNumber() {
-        return number;
+    public void add(Player p) {
+        list.add(p);
     }
 
-    public int addNumber(int i) {
-        return number += i;
+    public static void up() {
+        for (Rank i : RankRoller.ALL) {
+            i.living = new HashSet<>(i.list);
+        }
     }
 
-    public ChatColor getColour() {
-        return colour;
-    }
-
-    public static Rank getRank(int i) {
+    public static Rank getById(int i) {
         return values()[i];
-    }
-
-    public String getTag() {
-        return tag;
     }
 
 }

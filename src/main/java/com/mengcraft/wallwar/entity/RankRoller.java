@@ -7,7 +7,7 @@ import com.mengcraft.wallwar.Rank;
  */
 public class RankRoller {
 
-    public static final Rank[] RANK_ARRAY = {
+    public static final Rank[] ALL = {
             Rank.BLUE,
             Rank.GREEN,
             Rank.RED,
@@ -20,7 +20,7 @@ public class RankRoller {
         if (cursor > 3) {
             cursor = 0;
         }
-        return RANK_ARRAY[cursor++];
+        return ALL[cursor++];
     }
 
 }

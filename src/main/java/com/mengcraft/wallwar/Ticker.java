@@ -7,6 +7,7 @@ import com.mengcraft.wallwar.util.TitleManager;
 import lombok.val;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.potion.PotionEffect;
 
 /**
  * Created on 16-2-25.
@@ -68,22 +69,21 @@ public class Ticker implements Runnable {
         if (match.setRunning(true)) {// 暂且的修复方案
             val roller = new RankRoller();
             for (val p : match.getWaiter()) {
-                match.addMember(p, roller.next());
+                match.addPlayer(p, roller.next());
                 p.setGameMode(GameMode.SURVIVAL);
                 p.setFlying(false);
-                p.getActivePotionEffects().forEach(effect -> {
-                    p.removePotionEffect(effect.getType());
-                });
+                for (PotionEffect e : p.getActivePotionEffects()) {
+                    p.removePotionEffect(e.getType());
+                }
                 match.tpToSpawn(p);
             }
+            Rank.up();
             match.getWaiter().clear();
         }
     }
 
     private void end() {
-        main.getServer().getOnlinePlayers().forEach(p -> {
-            main.tpToLobby(p);
-        });
+        main.getServer().getOnlinePlayers().forEach(main::tpToLobby);
         main.getServer().getScheduler().runTaskLater(main, () -> {
             main.getServer().shutdown();
         }, 25);
@@ -94,7 +94,7 @@ public class Ticker implements Runnable {
             match.setWall(match.getWall() - 1);
             if (match.getWall() < 1) {
                 match.getLand().boomWall();
-                match.getMapper().keySet().forEach(p -> {
+                match.getLiving().keySet().forEach(p -> {
                     p.resetTitle();
                     p.sendTitle(ChatColor.BLUE + "战墙正开始倒塌", ChatColor.YELLOW + "岩浆将开始蔓延");
                 });

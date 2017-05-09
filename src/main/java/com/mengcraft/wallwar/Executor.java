@@ -1,6 +1,5 @@
 package com.mengcraft.wallwar;
 
-import com.mengcraft.wallwar.entity.StatusBoard;
 import com.mengcraft.wallwar.entity.WallUser;
 import com.mengcraft.wallwar.scoreboard.FixedBody;
 import com.mengcraft.wallwar.scoreboard.SidebarBoard;
@@ -58,18 +57,18 @@ public class Executor implements Listener {
     @EventHandler
     public void handle(AsyncPlayerChatEvent event) {
         if (match.isRunning() && !match.isEnd()) {
-            Rank rank = match.getRank(event.getPlayer());
-            if (Rank.NONE.equals(rank)) {
-                Set<Player> set = event.getRecipients();
+            val rank = match.getRank(event.getPlayer());
+            if (rank.equals(Rank.NONE)) {
+                val set = event.getRecipients();
                 set.clear();
                 set.addAll(match.getViewer());
             } else if (event.getMessage().startsWith("!") && !event.getPlayer().hasPermission("wall.chat.shout")) {
                 event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.DARK_RED + "你没有权限这样做！");
+                event.getPlayer().sendMessage(ChatColor.DARK_RED + "没有权限这样做");
             } else {
                 Set<Player> set = event.getRecipients();
                 set.clear();
-                set.addAll(match.getTeam(rank));
+                set.addAll(rank.getList());
                 set.addAll(match.getViewer());
             }
             event.setFormat("[" + rank.getColour() + rank.getTag() + "§r]§7 %1$s §8>§7>§f> %2$s");
@@ -141,7 +140,7 @@ public class Executor implements Listener {
         match.checkEnd();
 
         match.getUser(p).addDead();
-        if (p.getKiller() != null) {
+        if (!(p.getKiller() == null)) {
             match.getUser(p.getKiller()).addKilled();
         }
 

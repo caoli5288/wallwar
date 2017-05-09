@@ -116,7 +116,7 @@ public class Commander implements CommandExecutor {
     private boolean setSpawn(Player p, Iterator<String> it) {
         boolean b = it.hasNext() && p.getWorld() == match.getLand().getLevel();
         if (b) {
-            Rank rank = Rank.getRank(parseInt(it.next()));
+            Rank rank = Rank.getById(parseInt(it.next()));
             if (rank != null) {
                 Location loc = p.getLocation();
                 match.getLand().setSpawn(rank, loc);

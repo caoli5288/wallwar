@@ -1,7 +1,6 @@
 package com.mengcraft.wallwar;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.mengcraft.wallwar.entity.RankRoller;
 import com.mengcraft.wallwar.entity.WallUser;
 import com.mengcraft.wallwar.level.Land;
 import org.bukkit.ChatColor;
@@ -12,11 +11,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
+import static com.mengcraft.wallwar.Main.nil;
 import static com.mengcraft.wallwar.util.ListHelper.forEach;
 
 /**
@@ -24,15 +24,13 @@ import static com.mengcraft.wallwar.util.ListHelper.forEach;
  */
 public class Match {
 
-    private final Multimap<Rank, Player> map = HashMultimap.create();
-    private final Map<Player, Rank> mapper = new ConcurrentHashMap<>();
+    private final Map<Player, Rank> living = new HashMap<>();
     private final Set<Player> waiter = new HashSet<>();
-    private final Set<Player> viewer = new HashSet<>();
 
     private Location lobby;
     private Main main;
     private Land land;
-    private Rank rank;
+    private Rank win;
 
     private int wait;
     private int wall;
@@ -47,32 +45,33 @@ public class Match {
 
     public void checkEnd() {
         if (running && !end) {
-            checkEnd(new HashSet<>(mapper.values()));
+            checkEnd(new HashSet<>(living.values()));
         }
     }
 
     private void checkEnd(HashSet<Rank> set) {
         if (set.size() < 2) {
-            set.forEach(rank -> {
-                setRank(rank);
-            });
+            set.forEach(this::setWin);
             processEnd();
             setEnd(true);
         }
     }
 
     private void processEnd() {
-        map.asMap().forEach((r, list) -> {
-            if (r.equals(rank)) {
-                processWin(list);
-            } else {
-                processFail(list);
+        if (nil(win)) {
+            for (Rank t : RankRoller.ALL) {
+                processFail(t.getList());
             }
-        });
+        } else {
+            for (Rank t : RankRoller.ALL) {
+                if (!(t == win)) processFail(t.getList());
+            }
+            processWin(win.getList());
+        }
     }
 
     private void processFail(Collection<Player> list) {
-        forEach(list, p -> p.isOnline(), p -> {
+        forEach(list, Player::isOnline, p -> {
             p.setGameMode(GameMode.SPECTATOR);
             p.resetTitle();
             p.sendTitle(ChatColor.BLUE + "你在比赛中失败", ChatColor.YELLOW + "请等待传送大厅");
@@ -83,7 +82,7 @@ public class Match {
     }
 
     private void processWin(Collection<Player> list) {
-        forEach(list, p -> p.isOnline(), p -> {
+        forEach(list, Player::isOnline, p -> {
             p.setGameMode(GameMode.SPECTATOR);
             p.resetTitle();
             p.sendTitle(ChatColor.BLUE + "你在比赛中胜利", ChatColor.YELLOW + "请等待传送大厅");
@@ -96,16 +95,16 @@ public class Match {
     }
 
     public void cleanUp(Player p) {
-        if (mapper.containsKey(p)) {
-            mapper.remove(p).addNumber(-1);
-        } else if (viewer.contains(p)) {
-            viewer.remove(p);
+        if (living.containsKey(p)) {
+            living.remove(p).getLiving().remove(p);
+        } else if (getViewer().contains(p)) {
+            getViewer().remove(p);
         } else {
             waiter.remove(p);
         }
     }
 
-    public void addMember(Player p, Rank rank) {
+    public void addPlayer(Player p, Rank rank) {
         p.resetTitle();
         p.sendTitle(ChatColor.BLUE + "游戏已经开始了", ChatColor.YELLOW + "你的队伍是" + rank.getTag() + '队');
 
@@ -114,20 +113,18 @@ public class Match {
 
         p.getInventory().clear();
 
-        mapper.put(p, rank);
-        map.put(rank, p);
+        living.put(p, rank);
+        rank.add(p);
 
         getUser(p).addJoining();
-
-        rank.addNumber(1);
     }
 
     public void tpToSpawn(Player p) {
-        p.teleport(land.getSpawn(mapper.get(p)));
+        p.teleport(land.getSpawn(living.get(p)));
     }
 
     public void addViewer(Player p) {
-        viewer.add(p);
+        getViewer().add(p);
 
         p.teleport(land.getSpawn(Rank.NONE));
         p.setGameMode(GameMode.SPECTATOR);
@@ -161,7 +158,7 @@ public class Match {
     }
 
     public Set<Player> getViewer() {
-        return viewer;
+        return Rank.NONE.getList();
     }
 
     public Land getLand() {
@@ -173,11 +170,11 @@ public class Match {
     }
 
     public Rank getRank(Player p) {
-        return mapper.containsKey(p) ? mapper.get(p) : Rank.NONE;
+        return living.containsKey(p) ? living.get(p) : Rank.NONE;
     }
 
-    public void setRank(Rank rank) {
-        this.rank = rank;
+    public void setWin(Rank win) {
+        this.win = win;
     }
 
     public boolean isRunning() {
@@ -193,7 +190,7 @@ public class Match {
     }
 
     public boolean isTeammate(Entity p, Entity other) {
-        return mapper.get(p) == mapper.get(other);
+        return living.get(p) == living.get(other);
     }
 
     public int getWait() {
@@ -224,8 +221,8 @@ public class Match {
         return lava;
     }
 
-    public Map<Player, Rank> getMapper() {
-        return mapper;
+    public Map<Player, Rank> getLiving() {
+        return living;
     }
 
     public synchronized boolean setRunning(boolean running) {
@@ -242,8 +239,8 @@ public class Match {
         this.end = end;
     }
 
-    public Rank getRank() {
-        return rank;
+    public Rank getWin() {
+        return win;
     }
 
     public boolean isTouchMaxSize() {
@@ -279,10 +276,10 @@ public class Match {
     @Override
     public String toString() {
         return ("Match (" +
-                "mapper=" + mapper +
+                "mapper=" + living +
                 ", lobby=" + lobby +
                 ", waiter=" + waiter +
-                ", viewer=" + viewer +
+                ", viewer=" + getViewer() +
                 ", land=" + land +
                 ", wait=" + wait +
                 ", wall=" + wall +
@@ -292,10 +289,6 @@ public class Match {
 
     public boolean isNotRunning() {
         return !running;
-    }
-
-    public Collection<Player> getTeam(Rank rank) {
-        return map.get(rank);
     }
 
 }

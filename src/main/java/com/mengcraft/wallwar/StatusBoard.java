@@ -1,7 +1,6 @@
-package com.mengcraft.wallwar.entity;
+package com.mengcraft.wallwar;
 
-import com.mengcraft.wallwar.Match;
-import com.mengcraft.wallwar.Rank;
+import com.mengcraft.wallwar.entity.WallUser;
 import com.mengcraft.wallwar.scoreboard.FixedBodyHandler;
 import com.mengcraft.wallwar.scoreboard.LightedLine;
 import org.bukkit.ChatColor;
@@ -40,12 +39,12 @@ public class StatusBoard extends FixedBodyHandler {
         append("§6你的队伍: " + (rank != Rank.NONE ? rank.getColour() + rank.getTag() + '队' : "观众"));
         append("§r§r");
         append("§6地图: " + match.getMessage("scoreboard.match"));
-        append("§6存活: " + match.getMapper().size());
+        append("§6存活: " + match.getLiving().size());
         append("§6观战: " + match.getViewer().size());
-        append("§c红队: " + Rank.RED.getNumber());
-        append("§e黄队: " + Rank.YELLOW.getNumber());
-        append("§b蓝队: " + Rank.BLUE.getNumber());
-        append("§a绿队: " + Rank.GREEN.getNumber());
+        append("§c红队: " + Rank.RED.getLiving().size());
+        append("§e黄队: " + Rank.YELLOW.getLiving().size());
+        append("§b蓝队: " + Rank.BLUE.getLiving().size());
+        append("§a绿队: " + Rank.GREEN.getLiving().size());
         append("§r§r");
         append("§6战墙倒塌: " + match.getWall());
         append("§6岩浆高度: " + match.getLand().getLava());
@@ -57,7 +56,7 @@ public class StatusBoard extends FixedBodyHandler {
         append("§r");
         append("§7========");
         append("§r§r");
-        append("§3获胜队伍: " + match.getRank().getColour() + match.getRank().getTag() + '队');
+        append("§3获胜队伍: " + match.getWin().getColour() + match.getWin().getTag() + '队');
         append("§r§r§r");
         append("§7========");
         append("§r§r§r§r");
