@@ -1,5 +1,8 @@
 package com.mengcraft.wallwar;
 
+import com.avaje.ebean.EbeanServer;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.mengcraft.simpleorm.EbeanHandler;
 import com.mengcraft.simpleorm.EbeanManager;
@@ -10,24 +13,18 @@ import com.mengcraft.wallwar.util.TitleManager;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-
-import static java.util.concurrent.CompletableFuture.runAsync;
 
 /**
  * Created on 16-2-23.
  */
 public class Main extends JavaPlugin {
 
-    private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    private final Map<UUID, WallUser> userMap = new ConcurrentHashMap<>();
+    private final Map<UUID, WallUser> ingame = new ConcurrentHashMap<>();
+    private EbeanServer dataSource;
 
     @Override
     public void onEnable() {
@@ -87,7 +84,8 @@ public class Main extends JavaPlugin {
             }
         }
         handler.install();
-        handler.reflect();
+//        handler.reflect();
+        dataSource = handler.getServer();
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
@@ -95,50 +93,48 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         getServer().getOnlinePlayers().forEach(p -> {
-            WallUser removed = userMap.remove(p.getUniqueId());
+            WallUser removed = ingame.remove(p.getUniqueId());
             if (removed != null) {
-                getDatabase().save(removed);
+                dataSource.save(removed);
             }
         });
     }
 
     public void save(Player p) {
-        WallUser removed = userMap.remove(p.getUniqueId());
+        WallUser removed = ingame.remove(p.getUniqueId());
         if (removed != null) {
-            runAsync(() -> getDatabase().save(removed));
+            CompletableFuture.runAsync(() -> dataSource.save(removed));
         }
     }
 
     public void tpToLobby(Player p) {
-        if (buffer.size() < 1) {
-            DataOutput writer = new DataOutputStream(buffer);
-            try {
-                writer.writeUTF("Connect");
-                writer.writeUTF(getConfig().getString("lobby"));
-            } catch (IOException e) {
-                getLogger().log(Level.WARNING, "", e);
-            }
-        }
-        p.sendPluginMessage(this, "BungeeCord", buffer.toByteArray());
+        ByteArrayDataOutput buf = ByteStreams.newDataOutput();
+        buf.writeUTF("Connect");
+        buf.writeUTF(getConfig().getString("lobby"));
+        p.sendPluginMessage(this, "BungeeCord", buf.toByteArray());
     }
 
-    public Map<UUID, WallUser> getUserMap() {
-        return userMap;
+    public Map<UUID, WallUser> getIngame() {
+        return ingame;
     }
 
-    public void runTask(Runnable runnable) {
-        runAsync(runnable);
+    public void runAsync(Runnable runnable) {
+        CompletableFuture.runAsync(runnable);
     }
 
     public void createUser(Player p) {
-        WallUser user = getDatabase().createEntityBean(WallUser.class);
+        WallUser user = dataSource.createEntityBean(WallUser.class);
         user.setId(p.getUniqueId());
         user.setName(p.getName());
-        userMap.put(p.getUniqueId(), user);
+        ingame.put(p.getUniqueId(), user);
     }
 
     public static boolean nil(Object any) {
         return any == null;
+    }
+
+    public EbeanServer getDataSource() {
+        return dataSource;
     }
 
     public static final Gson GSON = new Gson();

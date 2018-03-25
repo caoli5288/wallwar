@@ -54,7 +54,7 @@ public class WallBoomer extends BukkitRunnable {
         next.getBlock().setType(Material.AIR);
         next.getWorld().playEffect(next, Effect.EXPLOSION_LARGE, 1);
         if (random.nextFloat() < 0.25) {
-            next.getWorld().playSound(next, Sound.EXPLODE, 1, 1);
+            next.getWorld().playSound(next, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
         }
     }
 

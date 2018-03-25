@@ -270,7 +270,7 @@ public class Match {
     }
 
     public WallUser getUser(Player p) {
-        return main.getUserMap().get(p.getUniqueId());
+        return main.getIngame().get(p.getUniqueId());
     }
 
     @Override

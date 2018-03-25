@@ -115,10 +115,10 @@ public class Executor implements Listener {
                     + p.getServer().getOnlinePlayers().size()
                     + "§7/§6" + match.getLand().getMaxSize() + "§7)");
         }
-        main.runTask(() -> {
-            WallUser user = main.getDatabase().find(WallUser.class, p.getUniqueId());
+        main.runAsync(() -> {
+            WallUser user = main.getDataSource().find(WallUser.class, p.getUniqueId());
             if (user != null) {
-                main.getUserMap().put(user.getId(), user);
+                main.getIngame().put(user.getId(), user);
             } else {
                 main.createUser(p);
             }
