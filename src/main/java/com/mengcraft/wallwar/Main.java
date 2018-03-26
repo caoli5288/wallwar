@@ -25,6 +25,7 @@ public class Main extends JavaPlugin {
 
     private final Map<UUID, WallUser> ingame = new ConcurrentHashMap<>();
     private EbeanServer dataSource;
+    private Match match;
 
     @Override
     public void onEnable() {
@@ -37,10 +38,12 @@ public class Main extends JavaPlugin {
             land.setMain(this);
             land.load();
 
-            Match match = new Match();
+            match = new Match();
             match.setLand(land);
             match.setMain(this);
             match.load();
+
+            PlaceholderSupport.b(this);
 
             Executor executor = new Executor();
             executor.setMatch(match);
@@ -76,7 +79,6 @@ public class Main extends JavaPlugin {
         EbeanHandler handler = EbeanManager.DEFAULT.getHandler(this);
         if (handler.isNotInitialized()) {
             handler.define(WallUser.class);
-            handler.setMaxSize(0xF);
             try {
                 handler.initialize();
             } catch (Exception e) {
@@ -129,12 +131,16 @@ public class Main extends JavaPlugin {
         ingame.put(p.getUniqueId(), user);
     }
 
-    public static boolean nil(Object any) {
-        return any == null;
+    public Match getMatch() {
+        return match;
     }
 
     public EbeanServer getDataSource() {
         return dataSource;
+    }
+
+    public static boolean nil(Object any) {
+        return any == null;
     }
 
     public static final Gson GSON = new Gson();
